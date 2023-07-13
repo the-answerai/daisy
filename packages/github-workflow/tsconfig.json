@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "lib": ["dom", "ES2015"],
+    "baseUrl": ".",
+    "paths": {
+      "@answerai/core/*": ["../../packages/core/src/*"]
+    }
+  },
+  "extends": "tsconfig/node.json",
+  "include": ["./src/**/*"],
+  "exclude": ["dist", "build", "node_modules"]
+}
