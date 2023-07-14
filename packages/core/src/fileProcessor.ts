@@ -85,7 +85,6 @@ export const fileProcessor = async (
 ): Promise<FileData[]> => {
   const filesData: FileData[] = [];
   const isDirectory = (await stat(iPath)).isDirectory();
-  console.log("isDirectory", isDirectory, iPath, "iPath");
   const files = await (isDirectory ? readdir(iPath) : [iPath]);
 
   for (const file of files) {
