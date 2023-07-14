@@ -1,5 +1,11 @@
 # @answerai/daisy-core
 
+## 0.1.2
+
+### Patch Changes
+
+- 32cca79: moved tsconfig into devedependencies
+
 ## 0.1.1
 
 ### Patch Changes

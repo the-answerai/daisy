@@ -1,6 +1,6 @@
 {
   "name": "@answerai/daisy",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "D.A.I.S.Y. - Document Automation and Intelligent System. A helpful bot that documents your code for you. It allows you to save it into memory and chat with it using AnswerAI",
   "main": "index.js",
   "scripts": {
