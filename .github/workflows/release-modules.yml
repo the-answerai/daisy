@@ -21,20 +21,26 @@ jobs:
         with:
           node-version: 18
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
         with:
-          version: 6.0.2
+          version: 7
+          run_install: false
 
-      - name: Dependencies cache
-        uses: actions/cache@v2
-        id: pnpm-cache # use this to check for `cache-hit` (`steps.pnpm-cache.outputs.cache-hit != 'true'`)
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
         with:
-          path: |
-            **/node_modules
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm
+            ${{ runner.os }}-pnpm-store-
 
       - name: Turbo Cache
         id: turbo-cache
@@ -45,8 +51,8 @@ jobs:
           restore-keys: |
             turbo-${{ github.job }}-${{ github.ref_name }}-
 
-      - name: Install project dependencies
-        run: pnpm i
+      - name: Install dependencies
+        run: pnpm install
 
       - name: Create Release Pull Request or Publish to npm
         id: changesets
