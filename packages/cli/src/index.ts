@@ -116,7 +116,6 @@ program
       update: false,
       confirmCompletionsFunction,
     });
-    console.log("got here");
   });
 
 // Define the "update" command
