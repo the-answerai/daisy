@@ -5,14 +5,22 @@ import daisy, {
   init,
   writePreviewMarkdownToFile,
 } from "@answerai/daisy-core";
-import readline from "readline/promises";
+import readline from "readline";
 import { Command } from "commander";
 import { resolve } from "path";
 
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
+const question = async (question: string) => {
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+  return new Promise<string>((resolve) => {
+    rl.question(question, (answer) => {
+      rl.close();
+      resolve(answer);
+    });
+  });
+};
 
 const codeBasePath = process.env.CODE_BASE_PATH || process.cwd();
 
@@ -20,7 +28,7 @@ const confirmCompletionsFunction = async (
   files: FileData[],
   config: DaisyConfig
 ) => {
-  const previewAnswer = await rl.question(
+  const previewAnswer = await question(
     "Do you want to preview the the prompts before proceeding? (y/n): "
   );
 
@@ -36,7 +44,7 @@ const confirmCompletionsFunction = async (
   console.log("\nSummary:");
   console.log(summary);
 
-  const answer = await rl.question("Do you want to proceed? (y/n): ");
+  const answer = await question("Do you want to proceed? (y/n): ");
   return answer.toLowerCase() === "y";
 };
 
@@ -91,7 +99,6 @@ program
         ? proceedWithoutAsking
         : confirmCompletionsFunction,
     });
-    process.exit(0);
   });
 
 // Define the "mem" command
@@ -109,7 +116,6 @@ program
       update: false,
       confirmCompletionsFunction,
     });
-    process.exit(0);
   });
 
 // Define the "update" command
@@ -126,7 +132,6 @@ program
       codeBasePath,
       confirmCompletionsFunction,
     });
-    process.exit(0);
     // Call the updateChangedFiles function
   });
 
@@ -140,9 +145,6 @@ program
 //     console.log("Listing all saved files...");
 //     // TODO: Implement the list functionality
 //   });
-
-// Set the required number of commands to 1
-program.allowUnknownOption(false).parse(process.argv);
 
 // Show help if no command is specified
 if (!program.args.length) {
