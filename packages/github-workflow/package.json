@@ -1,15 +1,14 @@
 {
-  "name": "@answerai/daisy-monorepo",
+  "name": "@answerai/daisy-github-workflow",
   "version": "0.1.0",
   "description": "D.A.I.S.Y. - Document Automation and Intelligent System. A helpful bot that documents your code for you. It allows you to save it into memory and chat with it using AnswerAI",
   "main": "index.js",
   "scripts": {
-    "build": "turbo build",
-    "daisy": "./packages/cli/bin/daisy",
-    "dev": "turbo dev",
-    "release": "pnpm build && changeset publish",
-    "test": "turbo test",
-    "version-packages": "changeset version"
+    "daisy": "node ./index.js",
+    "test": "jest"
+  },
+  "bin": {
+    "daisy": "./index.js"
   },
   "repository": {
     "type": "git",
@@ -21,10 +20,10 @@
     "url": "https://github.com/Answers-AI/daisy/issues"
   },
   "homepage": "https://github.com/Answers-AI/daisy#readme",
-  "dependencies": {
-    "@changesets/cli": "^2.26.2",
-    "husky": "^8.0.3",
-    "jest": "^29.5.0",
-    "turbo": "^1.10.7"
+  "devDependencies": {
+    "@types/node": "^20.4.2"
+  },
+  "peerDependencies": {
+    "dotenv": "^16.0.3"
   }
 }

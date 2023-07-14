@@ -1,0 +1,119 @@
+{
+  "codeBasePath": "../",
+  "pineconeIndexName": "daisy",
+  "pineconeNamespace": "daisy",
+  "daisyDirectoryName": "daisy",
+  "daisyDirectory": "../daisy",
+  "markdownDirectory": "../daisy/markdown",
+  "promptsFilePath": "../daisy/prompts",
+  "templateFilePath": "../daisy/templates",
+  "invalidPaths": [
+    "node_modules",
+    "dist",
+    "build",
+    "coverage",
+    "public",
+    "static",
+    "assets",
+    "images",
+    "img",
+    ".nextjs",
+    ".next",
+    ".git",
+    "generated",
+    ".yarn",
+    "patches"
+  ],
+  "invalidFileTypes": [
+    ".prompt",
+    ".csv",
+    ".tsv",
+    ".log",
+    ".docx",
+    ".xls",
+    ".xlsx",
+    ".ppt",
+    ".pptx",
+    ".svg",
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".gif",
+    ".bmp",
+    ".tiff",
+    ".tif",
+    ".ico",
+    ".mp3",
+    ".mp4",
+    ".wav",
+    ".wma",
+    ".avi",
+    ".mov",
+    ".mpg",
+    ".mpeg",
+    ".zip",
+    ".rar",
+    ".7z",
+    ".tar",
+    ".gz",
+    ".dmg",
+    ".iso",
+    ".exe",
+    ".bin",
+    ".pkg",
+    ".deb",
+    ".rpm",
+    ".env",
+    ".lock"
+  ],
+  "invalidFileNames": [
+    "pnpm-lock.yaml",
+    "package-lock.json",
+    "app_pairs.yml",
+    ".env"
+  ],
+  "fileTypes": {
+    "docs": {
+      "fileTypes": [".md", ".mdx", ".txt", "LICENSE.md", "LICENSE"],
+      "skipCompletion": true
+    },
+    "react": {
+      "fileTypes": [".jsx", ".tsx"],
+      "prompt": "react.prompt",
+      "template": "react.md"
+    },
+    "api": {
+      "pathIncludes": ["/api/", "/routes/", "/controllers/", "/services/"],
+      "prompt": "api.prompt",
+      "template": "api.md"
+    },
+    "config": {
+      "fileTypes": [
+        ".json",
+        ".yaml",
+        ".yml",
+        ".toml",
+        ".ini",
+        ".env",
+        ".env.example",
+        ".daisyrc"
+      ],
+      "prompt": "config.prompt",
+      "template": "config.md"
+    },
+    "script": {
+      "fileTypes": [".js", ".ts"],
+      "prompt": "script.prompt",
+      "template": "script.md"
+    },
+    "contentModel": {
+      "pathIncludes": ["content_types"],
+      "prompt": "contentModel.prompt",
+      "template": "contentModel.md"
+    },
+    "default": {
+      "prompt": "default.prompt",
+      "template": "default.md"
+    }
+  }
+}
