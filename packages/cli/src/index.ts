@@ -91,6 +91,7 @@ program
         ? proceedWithoutAsking
         : confirmCompletionsFunction,
     });
+    process.exit(0);
   });
 
 // Define the "mem" command
@@ -107,7 +108,8 @@ program
       config,
       update: false,
       confirmCompletionsFunction,
-    }); // Pass true to skip the batchCompletionProcessor
+    });
+    process.exit(0);
   });
 
 // Define the "update" command
@@ -124,18 +126,20 @@ program
       codeBasePath,
       confirmCompletionsFunction,
     });
+    process.exit(0);
     // Call the updateChangedFiles function
   });
 
 // Define the "list" command
-program
-  .command("list")
-  .description("List all saved files")
-  .action(() => {
-    // List all saved files
-    console.log("Listing all saved files...");
-    // TODO: Implement the list functionality
-  });
+// TODO: reenable this when code has been written
+// program
+//   .command("list")
+//   .description("List all saved files")
+//   .action(() => {
+//     // List all saved files
+//     console.log("Listing all saved files...");
+//     // TODO: Implement the list functionality
+//   });
 
 // Set the required number of commands to 1
 program.allowUnknownOption(false).parse(process.argv);

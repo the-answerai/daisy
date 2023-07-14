@@ -13,7 +13,6 @@ The configuration object includes the following properties:
 - `markdownDirectory`: The path to the markdown directory.
 - `promptsFilePath`: The path to the prompts file.
 - `templateFilePath`: The path to the template file.
-- `packageJsonPath`: The path to the package.json file.
 - `openAiApiKey`: The API key for OpenAI.
 - `pineconeApiKey`: The API key for Pinecone.
 - `pineconeEnvironment`: The environment for Pinecone.
@@ -28,6 +27,7 @@ The script then exports the `config` function as the module's default export.
 Overall, this script provides a centralized configuration object that can be easily modified to customize the behavior of the software application. It allows for easy management of paths, file types, and other settings, making it easier to extend or modify the application in the future.
 
 Potential issues or improvements:
+
 - The script relies on environment variables for some configuration values. It would be helpful to provide default values or validation for these variables to ensure the script works correctly even if the environment variables are not set.
 - The script could benefit from additional comments or documentation to explain the purpose and usage of each configuration property.
 - The script could be enhanced to support additional file types or configuration options, depending on the specific needs of the application.

@@ -2,7 +2,6 @@ const path = require("path");
 
 /** @typedef {DaisyConfig} Config  */
 const config = (CODE_BASE_PATH) => {
-  const PACKAGE_JSON_PATH = path.join(CODE_BASE_PATH, "package.json");
   const PINECONE_INDEX_NAME = process.env.DAISY_PINECONE_INDEX_NAME || "daisy";
   const PINECONE_NAMESPACE = process.env.DAISY_PINECONE_NAMESPACE || "default";
   const DAISY_DIRECTORY_NAME = process.env.DAISY_DIRECTORY_NAME || "daisy";
@@ -32,7 +31,6 @@ const config = (CODE_BASE_PATH) => {
     markdownDirectory: MARKDOWN_DIRECTORY,
     promptsFilePath: PROMPTS_FILE_PATH,
     templateFilePath: TEMPLATE_FILE_PATH,
-    packageJsonPath: PACKAGE_JSON_PATH,
     openAiApiKey: OPENAI_API_KEY,
     pineconeApiKey: PINECONE_API_KEY,
     pineconeEnvironment: PINECONE_ENVIRONMENT,

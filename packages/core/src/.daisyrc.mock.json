@@ -7,7 +7,6 @@
   "markdownDirectory": "../daisy/markdown",
   "promptsFilePath": "../daisy/prompts",
   "templateFilePath": "../daisy/templates",
-  "packageJsonPath": "../package.json",
   "invalidPaths": [
     "node_modules",
     "dist",
@@ -75,30 +74,16 @@
   ],
   "fileTypes": {
     "docs": {
-      "fileTypes": [
-        ".md",
-        ".mdx",
-        ".txt",
-        "LICENSE.md",
-        "LICENSE"
-      ],
+      "fileTypes": [".md", ".mdx", ".txt", "LICENSE.md", "LICENSE"],
       "skipCompletion": true
     },
     "react": {
-      "fileTypes": [
-        ".jsx",
-        ".tsx"
-      ],
+      "fileTypes": [".jsx", ".tsx"],
       "prompt": "react.prompt",
       "template": "react.md"
     },
     "api": {
-      "pathIncludes": [
-        "/api/",
-        "/routes/",
-        "/controllers/",
-        "/services/"
-      ],
+      "pathIncludes": ["/api/", "/routes/", "/controllers/", "/services/"],
       "prompt": "api.prompt",
       "template": "api.md"
     },
@@ -117,17 +102,12 @@
       "template": "config.md"
     },
     "script": {
-      "fileTypes": [
-        ".js",
-        ".ts"
-      ],
+      "fileTypes": [".js", ".ts"],
       "prompt": "script.prompt",
       "template": "script.md"
     },
     "contentModel": {
-      "pathIncludes": [
-        "content_types"
-      ],
+      "pathIncludes": ["content_types"],
       "prompt": "contentModel.prompt",
       "template": "contentModel.md"
     },

@@ -8,6 +8,7 @@
     "daisy": "./packages/cli/bin/daisy",
     "dev": "turbo dev",
     "release": "pnpm build && changeset publish",
+    "test": "turbo test",
     "version-packages": "changeset version"
   },
   "repository": {

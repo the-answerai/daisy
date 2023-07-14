@@ -50,7 +50,10 @@ async function main({
 
     console.log("Done finding changed files.");
 
-    console.log("allFilesToProcess:", allFilesToProcess);
+    console.log(
+      "allFilesToProcess:",
+      allFilesToProcess.map((f) => f.filePath)
+    );
   }
 
   const shouldContinue =
@@ -85,9 +88,8 @@ async function main({
 
     console.log(`All files memorized!`);
   } else {
-    console.log("Documenation canceled.");
+    console.log("Documentation canceled.");
   }
-  await new Promise((resolve) => process.stdin.once("end", resolve));
 }
 
 export default main;
