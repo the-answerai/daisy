@@ -1,5 +1,11 @@
 # @answerai/daisy
 
+## 0.1.3
+
+### Patch Changes
+
+- 5b12544: Using non-async readline API in order to support node v.16
+
 ## 0.1.2
 
 ### Patch Changes
