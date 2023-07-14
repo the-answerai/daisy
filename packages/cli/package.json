@@ -15,6 +15,9 @@
     "type": "git",
     "url": "git+https://github.com/Answers-AI/daisy.git"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "author": "Brad Taylor brad@theanswer.ai",
   "license": "ISC",
   "bugs": {
