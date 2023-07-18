@@ -1,0 +1,21 @@
+name: Run D.A.I.S.Y
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  daisy:
+    name: Daisy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: Runs daisy completions or memorizations
+        id: daisy
+        uses: ./packages/github-action
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ANSWERAI_API_KEY: ${{ secrets.ANSWERAI_API_KEY }}

@@ -11,6 +11,7 @@ import {
   FileTypeDefinition,
   FileTypeObject,
 } from "./types";
+import { exec } from "child_process";
 
 const tokenizer = new GPT3Tokenizer({ type: "gpt3" });
 
@@ -130,3 +131,17 @@ export function generateCostSummary(files: FileData[]) {
     Files Skipped: skipCompletion ${skippedCompletion}
   `;
 }
+
+export const execAsync = (command: string, cwd: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    exec(command, { cwd }, (error, stdout, stderr) => {
+      if (error) {
+        reject(error);
+      }
+      if (stderr) {
+        reject(stderr);
+      }
+      resolve(stdout ? stdout.trim() : "");
+    });
+  });
+};

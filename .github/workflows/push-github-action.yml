@@ -1,0 +1,24 @@
+on:
+  push:
+    tags:
+      - "@answerai/daisy-github-action@*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      - name: Pushes to another repository
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
+        with:
+          source-directory: "packages/github-action"
+          destination-github-username: "Answers-Ai"
+          destination-repository-name: "daisy-github-action"
+          user-name: daisy-bot
+          user-email: bot@theanswer.ai
+          commit-message: "Update to version ${{ github.ref }}"
+          target-branch: main

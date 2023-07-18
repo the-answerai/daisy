@@ -9,6 +9,7 @@ export type DaisyConfig = {
   openAiApiKey?: string;
   pineconeApiKey?: string;
   pineconeEnvironment?: string;
+
   answerAI?: {
     apiKey: string;
     embeddingsUrl: string;
@@ -31,16 +32,16 @@ export type FileTypeObject = {
   skipCompletion: boolean;
 };
 
-export type FileInfo = {
+export type FileGitInfo = {
   filePath: string;
   status: "A" | "M" | "D";
   gitDiff?: string;
 };
 
 export type ChangedFiles = {
-  addedFiles: FileInfo[];
-  modifiedFiles: FileInfo[];
-  deletedFiles: FileInfo[];
+  addedFiles: FileGitInfo[];
+  modifiedFiles: FileGitInfo[];
+  deletedFiles: FileGitInfo[];
 };
 
 export type FileTypeDefinition = {

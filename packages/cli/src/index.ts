@@ -93,8 +93,8 @@ program
         ? resolve(codeBasePath, options.input)
         : undefined,
       update: false,
-      codeBasePath,
       config,
+      memorize: true,
       confirmCompletionsFunction: options.yes
         ? proceedWithoutAsking
         : confirmCompletionsFunction,
@@ -111,7 +111,7 @@ program
     const config = await init(codeBasePath);
     await daisy({
       skipCompletion: true,
-      codeBasePath,
+      memorize: true,
       config,
       update: false,
       confirmCompletionsFunction,
@@ -127,9 +127,9 @@ program
     console.log("Starting D.A.I.S.Y. with 'update' command...");
     await daisy({
       skipCompletion: false,
+      memorize: true,
       update: true,
       config,
-      codeBasePath,
       confirmCompletionsFunction,
     });
     // Call the updateChangedFiles function
@@ -145,6 +145,8 @@ program
 //     console.log("Listing all saved files...");
 //     // TODO: Implement the list functionality
 //   });
+
+program.parse(process.argv);
 
 // Show help if no command is specified
 if (!program.args.length) {
