@@ -8,23 +8,21 @@ import {
   getLatestDaisyCommit,
   init,
 } from "@answerai/daisy-core";
-import { existsSync } from "fs";
 import { resolve } from "path";
-
-const getOptionalInput = (name: string) => core.getInput(name) || undefined;
 
 (async () => {
   let githubToken = process.env.GITHUB_TOKEN;
 
   if (!githubToken) {
-    core.setFailed("Please add the GITHUB_TOKEN to the changesets action");
+    core.setFailed("Please add the GITHUB_TOKEN to the daisy action");
     return;
   }
 
-  const inputCwd = core.getInput("cwd");
-  if (inputCwd) {
-    core.info("changing directory to the one given as the input");
-    process.chdir(inputCwd);
+  if (!process.env.ANSWERAI_API_KEY) {
+    core.setFailed(
+      "Please add the ANSWERAI_API_KEY to the daisy action environment variables"
+    );
+    return;
   }
 
   let setupGitUser = core.getBooleanInput("setupGitUser");
