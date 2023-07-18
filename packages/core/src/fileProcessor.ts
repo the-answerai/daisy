@@ -390,6 +390,7 @@ export const writeResponsesToFile = async (
       files[i].filePath.replace(config.codeBasePath, "")
     );
     const fileDir = path.dirname(filePath);
+    console.log("response data", responses[i]?.data);
     const fileContent =
       responses[i]?.data?.choices[0]?.message?.content ||
       files[i]?.fileContents;

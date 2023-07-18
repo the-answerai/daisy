@@ -139,12 +139,14 @@ export async function runCompletionsAndCreatePr({
   await gitUtils.switchToMaybeExistingBranch(completionsBranch);
   await gitUtils.reset(github.context.sha);
 
+  // only use firest two files for now
+  files = files.slice(0, 2);
+
   core.info("debugging files");
-  core.info(JSON.stringify(files.slice(0, 2), null, 2));
+  core.info(JSON.stringify(files, null, 2));
 
   await runCompletions({
-    // only use firest two files for now
-    files: files.slice(0, 2),
+    files,
     config,
     branch,
     skipGit: true,
