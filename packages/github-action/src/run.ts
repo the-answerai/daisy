@@ -87,11 +87,11 @@ export async function getPrMessage({
   // TODO: needs to be published to github marketplace
   let messageHeader = `This PR was opened by the [D.A.I.S.Y action](https://github.com/daisy/action) GitHub action. When you're ready to do a release, you can merge this and the memorization will run automatically. If you're not ready to do memorize yet, that's fine, whenever you add more changesets to ${branch}, this PR will be updated.
 `;
-  let messageReleasesHeading = `# Releases`;
+  let messageFilesHeading = `# Files`;
 
   let fullMessage = [
     messageHeader,
-    messageReleasesHeading,
+    messageFilesHeading,
     ...files.map((file) => file.filePath),
   ].join("\n");
 
@@ -100,7 +100,7 @@ export async function getPrMessage({
   if (fullMessage.length > prBodyMaxCharacters) {
     fullMessage = [
       messageHeader,
-      messageReleasesHeading,
+      messageFilesHeading,
       `\n> The list of updated files has been omitted from this message, as the content exceeds the size limit.\n`,
     ].join("\n");
   }
@@ -139,12 +139,16 @@ export async function runCompletionsAndCreatePr({
   await gitUtils.switchToMaybeExistingBranch(completionsBranch);
   await gitUtils.reset(github.context.sha);
 
+  core.info("debugging files");
+  core.info(JSON.stringify(files.slice(0, 2), null, 2));
+
   await runCompletions({
-    files,
+    // only use firest two files for now
+    files: files.slice(0, 2),
     config,
     branch,
     skipGit: true,
-    cwd: process.cwd(),
+    cwd: config.codeBasePath,
     confirmCompletionsFunction: async () => true,
   });
 

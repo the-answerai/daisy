@@ -92,6 +92,7 @@ const getOptionalInput = (name: string) => core.getInput(name) || undefined;
       return;
     }
     case filesToUpdate.length > 0:
+      core.info("Documenting changed files...");
       const pullRequestNumber = await runCompletionsAndCreatePr({
         config,
         files: filesToUpdate,
