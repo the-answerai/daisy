@@ -24,11 +24,8 @@ import { VectorOperationsApi } from "@pinecone-database/pinecone/dist/pinecone-g
 import { Configuration, OpenAIApi } from "openai";
 import {
   getChangedFiles,
-  getCommitForTag,
   getCurrentBranch,
   getFileDiff,
-  getLatestDaisyTag,
-  getLatestDaisyTagForBranch,
   verifyValidRepo,
 } from "./gitCommands";
 import { get } from "http";

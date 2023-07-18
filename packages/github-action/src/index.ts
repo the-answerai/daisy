@@ -1,10 +1,11 @@
 import * as core from "@actions/core";
-import { writeFile, readFile } from "fs/promises";
+import { writeFile } from "fs/promises";
 import * as gitUtils from "./gitUtils";
 import { memorize, runCompletionsAndCreatePr } from "./run";
 import {
   getCurrentBranch,
   getFilesToProcess,
+  getLatestDaisyCommit,
   init,
 } from "@answerai/daisy-core";
 import { existsSync } from "fs";
@@ -43,40 +44,37 @@ const getOptionalInput = (name: string) => core.getInput(name) || undefined;
   core.setOutput("documented", "false");
 
   const config = await init(process.cwd());
-  const daisyDirectory = resolve(process.cwd(), config.daisyDirectoryName);
-  const completionHistoryFile = resolve(
-    process.cwd(),
-    config.completionHistoryConfigFile
-  );
-  const isDaisyIgnored = await gitUtils.isIgnored(daisyDirectory);
+  const markdownDirectory = resolve(process.cwd(), config.markdownDirectory);
+  const isDaisyIgnored = await gitUtils.isIgnored(markdownDirectory);
 
   if (isDaisyIgnored) {
     core.setFailed(
-      "Daisy directory is git-ignored. You must have the daisy directory in source control to use the daisy github action."
+      "Daisy output directory is git-ignored. You must have the daisy directory in source control to use the daisy github action."
     );
     return;
   }
 
-  let update = true;
+  const cwd = config.codeBasePath;
+  const branch = await getCurrentBranch(config.codeBasePath);
+  const lastCommit = await getLatestDaisyCommit({ branch, cwd });
+  const update = !!lastCommit;
 
-  if (
-    !existsSync(completionHistoryFile) ||
-    !JSON.parse(await readFile(completionHistoryFile, "utf-8"))[
-      await getCurrentBranch()
-    ]
-  ) {
-    // either the history file does not exist, or it does not contain history for the current branch.
-    // in either case, we should not update.
-    update = false;
-  }
-
-  const filesToUpdate = await getFilesToProcess({
+  let filesToUpdate = await getFilesToProcess({
+    inputPath: config.codeBasePath,
     update,
     config,
+    cwd,
+    branch,
   });
 
-  // TODO: determine if it needs memorization
-  const needsMemorization = `${1}` != "1";
+  let needsMemorization = false;
+  const needsCompletions = filesToUpdate.length > 0;
+  if (!needsCompletions) {
+    const changeMarkdownFiles = await gitUtils.getChangedMarkdownFiles(
+      markdownDirectory
+    );
+    needsMemorization = changeMarkdownFiles.length > 0;
+  }
 
   switch (true) {
     case !filesToUpdate.length && !needsMemorization:
@@ -85,7 +83,6 @@ const getOptionalInput = (name: string) => core.getInput(name) || undefined;
     case needsMemorization: {
       core.info("Memorizing to Pinecone...");
 
-      // TODO: memorize
       await memorize({
         config,
         files: filesToUpdate,
