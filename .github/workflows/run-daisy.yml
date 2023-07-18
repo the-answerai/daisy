@@ -49,12 +49,12 @@ jobs:
           restore-keys: |
             turbo-${{ github.job }}-${{ github.ref_name }}-
 
+      - name: Install dependencies
+        run: pnpm install
+
       - name: Build
         id: build
         run: pnpm build
-
-      - name: Install dependencies
-        run: pnpm install
 
       - name: Runs daisy completions or memorizations
         id: daisy
