@@ -11,39 +11,39 @@ Import Statements:
 
 - The script includes a commented-out import statement for the "Handlebars" library, which is currently not being used.
 
-Internal Functions:
-- countTokens(content: string): Promise<number>
-  - This function takes a string content as input and returns a promise that resolves to the number of tokens in the content. It uses the "tokenizer" instance to encode the content and then retrieves the length of the "bpe" property of the encoded result.
+Classes and Functions:
+- The script defines a test suite using the "describe" function from the testing framework. The test suite is named "Utils test suite".
 
-- compileCompletionPrompts(filePath: string, prompt: string, options: object): Promise<string>
-  - This function takes a file path, a prompt string, and an options object as input and returns a promise that resolves to a compiled prompt string. It is currently commented out and marked as a TODO item, so its implementation is not provided.
+- Inside the test suite, there are multiple test cases defined using the "test" function. Each test case is responsible for testing a specific utility function.
 
-- getCompletionModelBasedOnTokenSize(tokenSize: number): string | null
-  - This function takes a token size as input and returns a string representing the appropriate completion model based on the token size. If the token size is within the range supported by the "gpt-3.5-turbo-16k" model, it returns that model name. Otherwise, it returns null.
+- The "countTokens" test case tests the "countTokens" function. It sets up a test sentence, encodes it using the tokenizer, and compares the expected token count with the actual token count obtained from the "countTokens" function.
 
-- getEstimatedPricing(model: string, tokenSize: number): string | null
-  - This function takes a model name and a token size as input and returns a string representing the estimated pricing for the given model and token size. If the model name is recognized, it returns the corresponding pricing value. Otherwise, it returns null.
+- The "getCompletionModelBasedOnTokenSize" test case tests the "getCompletionModelBasedOnTokenSize" function. It checks the expected completion model based on different token sizes.
 
-- generateCostSummary(files: object[]): string
-  - This function takes an array of file objects as input and returns a string representing a cost summary. Each file object in the array should have properties like "skipCompletion", "model", and "tokens". The function is currently commented out and marked as a TODO item, so its implementation is not provided.
+- The "getEstimatedPricing" test case tests the "getEstimatedPricing" function. It verifies the expected pricing for different completion models and token sizes.
+
+- The "generateCostSummary" test case is currently commented out and not functional. It is intended to test the "generateCostSummary" function. It sets up an array of files with different properties and asserts the expected cost summary.
 
 Loops and Conditional Statements:
-The script does not contain any explicit loops or conditional statements. However, the test cases defined using the "test" function are executed in a loop-like manner by the testing framework.
+There are no explicit loops or conditional statements in this script. The test cases are executed sequentially, and the assertions within each test case determine the success or failure of the test.
 
 Variable Usage:
 - The "content" variable is used to store a test sentence for token counting.
-- The "encoded" variable is used to store the result of encoding the "content" using the "tokenizer" instance.
-- The "expectedTokenCount" variable is used to store the expected number of tokens in the "content".
-- The "tokenCount" variable is used to store the actual number of tokens returned by the "countTokens" function.
-- The "compiledPrompt" variable is used to store the compiled prompt returned by the "compileCompletionPrompts" function (currently commented out).
-- The "files" variable is used to store an array of file objects for generating a cost summary (currently commented out).
-- The "summary" variable is used to store the generated cost summary returned by the "generateCostSummary" function (currently commented out).
-- Various variables are used in the assertion statements of the test cases to compare expected and actual values.
 
-Potential Bugs or Issues:
-- The "compileCompletionPrompts" and "generateCostSummary" functions are currently commented out and marked as TODO items. This suggests that their implementation is missing or incomplete. To address this, the functions should be implemented and tested thoroughly.
-- The test cases for the "compileCompletionPrompts" and "generateCostSummary" functions are also commented out. These test cases should be uncommented and implemented to ensure the correctness of the functions.
-- The script imports the "GPT3Tokenizer" class but does not use it directly. If the tokenizer is not required for any other part of the application, the import statement can be removed to avoid unnecessary dependencies.
+- The "encoded" variable is used to store the encoded representation of the test sentence obtained from the tokenizer.
+
+- The "expectedTokenCount" variable is used to store the expected token count based on the encoded representation.
+
+- The "tokenCount" variable is used to store the actual token count obtained from the "countTokens" function.
+
+- The "compiledPrompt" variable is used to store the compiled completion prompts obtained from the "compileCompletionPrompts" function. This variable is currently not being used as the test case is commented out.
+
+- The "files" variable is used to store an array of file objects for generating a cost summary. This variable is currently not being used as the test case is commented out.
+
+Known Issues or Bugs:
+- The test cases for the "compileCompletionPrompts" and "generateCostSummary" functions are currently commented out and not functional. These test cases need to be implemented and properly tested.
+
+- The import statement for the "Handlebars" library is commented out, indicating that it is not being used. If this library is required for the functionality of the script, the import statement should be uncommented.
 
 Summary:
-The "utils.test.js" script is responsible for testing various utility functions used in the broader software application. It imports utility functions from a "utils.js" file and a tokenizer class from the "gpt3-tokenizer" package. The script contains test cases for each utility function, ensuring their correctness. However, two utility functions, "compileCompletionPrompts" and "generateCostSummary", are currently incomplete and need to be implemented. Additionally, their corresponding test cases are commented out and should be uncommented and implemented. The script does not contain any explicit loops or conditional statements. Overall, the script serves as a comprehensive test suite for the utility functions and can be extended or modified to accommodate future changes in the application.
+The "utils.test.js" script is responsible for testing various utility functions used in the broader software application. It imports utility functions from the "utils.js" file and the "GPT3Tokenizer" class from the "gpt3-tokenizer" package. The script defines a test suite with multiple test cases for each utility function. The test cases cover different scenarios and assert the expected behavior of the utility functions. However, two test cases are currently commented out and need to be implemented. Additionally, the import statement for the "Handlebars" library is commented out, indicating that it is not being used.

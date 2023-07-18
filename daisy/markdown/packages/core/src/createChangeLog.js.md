@@ -20,9 +20,7 @@ This script interacts with the `fileProcessor` module to retrieve the list of mo
 
 Developer Questions:
 - How does the `getChangedFiles` function work and what does it return?
-- What parameters does the `createChatCompletion` function take and what does it return?
-- How are the summaries stored and processed after they are generated?
+- What parameters does the `createChatCompletion` function accept and what does it return?
+- How are the summaries stored and processed in the `summaryArray`?
 - How can I adjust the temperature value for the `createChatCompletion` function?
-- What does the `countTokens` function do and how is it used?
-- How is the GPT model determined based on the token size?
-- How is the pricing estimated for the generated summaries?
+- What further processing needs to be done on the `summaryArray`?

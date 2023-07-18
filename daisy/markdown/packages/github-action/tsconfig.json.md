@@ -18,7 +18,7 @@ Summary:
 The provided configuration file is used to specify various settings and options for the TypeScript compiler in a larger application. It includes options related to the compiler, such as the libraries to include, the base URL for module resolution, and the output directory for compiled files. It also extends another configuration file and specifies which files to include and exclude from the compilation process.
 
 Service:
-This configuration file is specific to a TypeScript application. TypeScript is a programming language that is a superset of JavaScript, adding static typing and other features to JavaScript. It is often used in larger applications to improve code maintainability and catch errors at compile-time.
+This configuration file is specific to a TypeScript application. TypeScript is a programming language that is a superset of JavaScript, adding static typing and other features to JavaScript. It is commonly used for large-scale applications where type safety and tooling support are important.
 
 Configuration Summary:
 The configuration file overrides the default compiler options by specifying the libraries to include (dom and ES2015), the base URL for module resolution (current directory), and the output directory for compiled files (dist). It also extends another configuration file (tsconfig/node.json) to inherit additional settings. The file includes all files under the src directory but excludes the dist, build, and node_modules directories.
@@ -41,6 +41,6 @@ Developer Questions:
 3. How can I include additional directories or files for compilation?
 4. How can I exclude specific files or directories from the compilation process?
 5. What other configuration files can I extend, and what settings do they provide?
-6. How can I configure other compiler options not specified in this file?
-7. How does the baseUrl affect module resolution in the application?
+6. How can I configure additional compiler options not specified in this file?
+7. How does the baseUrl affect module resolution in my application?
 8. How can I configure different compiler options for different environments (e.g., development vs. production)?

@@ -11,17 +11,17 @@ The configuration file defines three launch configurations: "D.A.I.S.Y. Start", 
 
 Configuration Breakdown:
 - "command": Specifies the command to be executed when launching the configuration. In this case, the commands are "npm run daisy start", "npm run daisy mem", and "npm run daisy update".
-- "name": Provides a name for the configuration. The names are "D.A.I.S.Y. Start", "D.A.I.S.Y. Memorize", and "D.A.I.S.Y. Update".
-- "request": Specifies the type of request to be made when launching the configuration. In this case, the value is "launch".
-- "type": Specifies the type of terminal to be used when executing the command. The value is "node-terminal" for all configurations.
-- "args": (Optional) Specifies additional arguments to be passed to the command. Only the "D.A.I.S.Y. Update" configuration includes this parameter, with the value ["--update"].
+- "name": Provides a name for the configuration. The names given are "D.A.I.S.Y. Start", "D.A.I.S.Y. Memorize", and "D.A.I.S.Y. Update".
+- "request": Specifies the type of request to be made when launching the configuration. The value "launch" indicates that the configuration is meant to launch the application.
+- "type": Specifies the type of terminal to be used when executing the command. The value "node-terminal" suggests that the command will be executed in a Node.js terminal.
+- "args": (Optional) Specifies additional arguments to be passed to the command. In the "D.A.I.S.Y. Update" configuration, the "--update" flag is passed as an argument.
 
 Interaction Summary:
-This configuration file allows developers to easily launch specific commands related to the "D.A.I.S.Y." project. By selecting the desired configuration, the corresponding command will be executed in the specified terminal.
+The configuration file allows developers to easily launch specific commands related to the "D.A.I.S.Y." project. By selecting the desired configuration, developers can quickly execute the corresponding command without having to remember or type it manually.
 
 Developer Questions:
-1. How do I add a new launch configuration?
-2. What are the available options for the "request" parameter?
-3. How can I customize the terminal type for a specific configuration?
-4. Can I pass additional arguments to the command in a launch configuration?
-5. How can I debug the execution of a specific command using this configuration file?
+1. How do I add a new launch configuration to this file?
+2. What other types of requests can be used besides "launch"?
+3. Can I specify a different terminal type for each configuration?
+4. How can I pass additional arguments to a command in a configuration?
+5. What other attributes can be used in a launch configuration?
