@@ -59,7 +59,9 @@ export const checkIfClean = async (): Promise<boolean> => {
 };
 
 export const isIgnored = async (path: string): Promise<boolean> => {
-  const { stdout } = await getExecOutput("git", ["check-ignore", path]);
+  const { stdout } = await getExecOutput("git", ["check-ignore", path], {
+    ignoreReturnCode: true,
+  });
   return !!stdout;
 };
 
