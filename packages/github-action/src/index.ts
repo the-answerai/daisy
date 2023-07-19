@@ -68,10 +68,8 @@ import { resolve } from "path";
   let needsMemorization = false;
   const needsCompletions = filesToUpdate.length > 0;
   if (!needsCompletions) {
-    const topCommit = await gitUtils.getCommitForMarkdownDiff();
     needsMemorization = await gitUtils.hasChangedMarkdownFiles(
-      markdownDirectory,
-      topCommit
+      markdownDirectory
     );
   }
 

@@ -69,14 +69,11 @@ export const isIgnored = async (path: string): Promise<boolean> => {
   return !!stdout;
 };
 
-export const hasChangedMarkdownFiles = async (
-  markdownDir: string,
-  topCommit: string
-) => {
+export const hasChangedMarkdownFiles = async (markdownDir: string) => {
   const { stdout } = await getExecOutput("git", [
     "diff",
-    topCommit,
-    `${topCommit}~1`,
+    "HEAD",
+    "HEAD~1",
     "--name-only",
     "--",
     markdownDir,
@@ -91,10 +88,6 @@ export const isCurrentHeadAMergeCommit = async () => {
     { ignoreReturnCode: true }
   );
   return !stderr && !!stdout;
-};
-
-export const getCommitForMarkdownDiff = async () => {
-  return (await isCurrentHeadAMergeCommit()) ? "HEAD~1" : "HEAD";
 };
 
 export const findCommitWithPrefix = async (prefix: string) => {
