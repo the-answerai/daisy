@@ -1,40 +1,31 @@
 Summary:
-This code is a script that is part of a larger software application called Daisy. Its purpose is to process files and generate documentation based on certain criteria. The script takes in various parameters and performs a series of operations to process the files, generate documentation, and store the results.
+This code is a script that is part of a larger software application called Daisy. Its purpose is to process files and generate documentation based on the contents of those files. The script has several functions that handle different aspects of the documentation process, such as retrieving files to process, running completions, and running memorization. The script can be configured to update existing documentation or create new documentation from scratch.
 
 Import statements:
-- `fileProcessor`, `batchCompletionProcessor`, `batchEmbeddingsProcessor`, `splitFiles`, `writeResponsesToFile`, and `getChangedFilesWithStatus` are imported from the `fileProcessor` module. These functions are likely responsible for the actual file processing and documentation generation.
-- `DaisyConfig` and `FileData` are imported from the `types` module. These types likely define the structure of the configuration and file data used in the script.
+- `stat` from "fs/promises": This import is used to get information about a file or directory.
+- `fileProcessor`, `batchCompletionProcessor`, `batchEmbeddingsProcessor`, `splitFiles`, `writeResponsesToFile`, `getChangedFilesWithStatus` from "./fileProcessor": These imports are functions from the "fileProcessor" module that handle different steps of the documentation process.
+- `createNewDaisyCommit`, `getCurrentBranch`, `getLatestDaisyCommit` from "./gitCommands": These imports are functions from the "gitCommands" module that interact with the Git version control system.
+- `DaisyConfig`, `FileData` from "./types": These imports are types used in the script to define the structure of configuration and file data.
+- `dirname` from "path": This import is used to get the directory name of a file path.
 
 Script Summary:
-The script defines a function called `main` that takes in a set of properties as its parameters. It performs various operations to process files, generate documentation, and store the results. The script also exports the `main` function as the default export.
+The script defines several functions that handle different aspects of the documentation process. It also exports a default function called "main" that serves as the entry point for running the script. The "main" function orchestrates the different steps of the documentation process based on the provided configuration.
 
 Internal Functions:
-- `main`: This is the main function of the script. It takes in a set of properties as its parameters and performs the following steps:
-  - If an `inputPath` is provided, it is assigned to the `iPath` variable. Otherwise, the `codeBasePath` is assigned to `iPath`.
-  - The `fileProcessor` function is called with the `iPath` and `config` parameters to retrieve a list of files to process. The result is assigned to the `allFilesToProcess` variable.
-  - If the `update` parameter is `true`, the script retrieves the list of added, modified, and deleted files using the `getChangedFilesWithStatus` function. The `addedFiles` and `modifiedFiles` are combined into a single array called `updatedFiles`.
-  - The `allFilesToProcess` array is filtered to only include files whose `filePath` matches the `filePath` of any object in the `updatedFiles` array.
-  - If the `skipCompletion` parameter is `true`, the script skips the confirmation step. Otherwise, it calls the `confirmCompletionsFunction` with the `allFilesToProcess` and `config` parameters to confirm if the completions should proceed. The result is assigned to the `shouldContinue` variable.
-  - If `shouldContinue` is `true`, the script performs the following steps:
-    - The `splitFiles` function is called with the `allFilesToProcess` array to split the files into two arrays: `skipCompletionFiles` and `filesForDocumentation`.
-    - The `writeResponsesToFile` function is called with the `skipCompletionFiles` array and an empty array, along with the `config` parameter, to write the responses to markdown files.
-    - If `skipCompletion` is `false`, the `batchCompletionProcessor` function is called with the `filesForDocumentation` array and the `config` parameter to process the files for documentation.
-    - The script logs the number of new documentation files and calls the `batchEmbeddingsProcessor` function with the `allFilesToProcess` array and the `config` parameter to generate embeddings for the files.
-  - If `shouldContinue` is `false`, the script logs that documentation has been canceled.
-  - The script waits for the `end` event on the `process.stdin` stream before resolving.
+- `getFilesToProcess`: This function retrieves the files to process based on the provided input path, update flag, configuration, current working directory, and branch. It uses the "fileProcessor" function to process all files initially. If the update flag is set, it checks for changes in files since the last Daisy commit and filters the files to process accordingly.
+- `runCompletions`: This function runs the completions process for the provided files and configuration. It splits the files into two categories: files to skip completions for and files to document. It then writes the responses to markdown files for the files to skip completions and runs the batch completion processor for the files to document. If the skipGit flag is not set, it creates a new Daisy commit and tag.
+- `runMemorization`: This function runs the memorization process for the provided files and configuration. It uses the batch embeddings processor to generate embeddings for the files.
+- `main`: This is the entry point function for running the script. It retrieves the input path, current working directory, and branch based on the provided arguments or configuration. It then calls the "getFilesToProcess" function to get the files to process. If the skipCompletion flag is not set, it calls the "runCompletions" function. If the memorize flag is set, it calls the "runMemorization" function.
 
 External Functions:
 - None
 
 Interaction Summary:
-This script interacts with the `fileProcessor` module to perform file processing and documentation generation. It also interacts with the `types` module to use the defined types for configuration and file data.
+This script interacts with other modules in the application, such as "fileProcessor" and "gitCommands", to perform different steps of the documentation process. It also relies on the provided configuration to determine the behavior of the script.
 
 Developer Questions:
-- What does the `fileProcessor` module do and how does it process files?
-- What are the properties and structure of the `DaisyConfig` and `FileData` types?
-- How does the `batchCompletionProcessor` function process files for documentation?
-- What does the `batchEmbeddingsProcessor` function do and how does it generate embeddings?
-- How does the `splitFiles` function split the files into two arrays?
-- What is the purpose of the `confirmCompletionsFunction` and how is it used?
-- How does the `writeResponsesToFile` function write the responses to markdown files?
-- What is the purpose of the `getChangedFilesWithStatus` function and how does it retrieve the changed files?
+- How can I configure the script to update existing documentation instead of creating new documentation from scratch?
+- How can I customize the behavior of the completions process?
+- How can I extend the script to support additional steps in the documentation process?
+- How can I handle deleted files during the update process?
+- How can I handle errors or exceptions that may occur during the documentation process?

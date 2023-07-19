@@ -1,6 +1,5 @@
 import { stat, readdir, readFile, mkdir, writeFile } from "fs/promises";
 import path from "path";
-import { exec } from "child_process";
 import { PineconeClient } from "@pinecone-database/pinecone";
 import axios from "axios";
 
@@ -17,26 +16,21 @@ import {
   DaisyConfig,
   FileContents,
   FileData,
-  FileInfo,
+  FileGitInfo,
   FileTypeObject,
   PackageJson,
 } from "./types";
 import { VectorOperationsApi } from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch";
 import { Configuration, OpenAIApi } from "openai";
+import {
+  getChangedFiles,
+  getCurrentBranch,
+  getFileDiff,
+  verifyValidRepo,
+} from "./gitCommands";
+import { get } from "http";
 
 const client = new PineconeClient();
-
-export const getGitBranch = async (): Promise<string> => {
-  return new Promise((resolve, reject) => {
-    exec("git branch --show-current", (error, stdout, stderr) => {
-      if (error) {
-        console.error(`exec error: ${error}`);
-        reject(error);
-      }
-      resolve(stdout.trim());
-    });
-  });
-};
 
 export const getFileData = async (
   filePath: string,
@@ -462,111 +456,65 @@ export const splitFiles = (files: FileData[]) => {
   return [skipCompletionFiles, otherFiles];
 };
 
-export async function getChangedFilesWithStatus(
-  codepath: string,
-  config: DaisyConfig
-): Promise<ChangedFiles> {
-  const cwd = (await stat(codepath)).isDirectory()
-    ? codepath
-    : path.dirname(codepath);
-  return new Promise((resolve, reject) => {
-    exec("git rev-parse --verify HEAD", { cwd }, (error, stdout, stderr) => {
-      if (error && stderr.includes("fatal: Needed a single revision")) {
-        // No commit history found, returning empty result.
-        return resolve({
-          addedFiles: [],
-          modifiedFiles: [],
-          deletedFiles: [],
-        });
-      } else if (error || stderr) {
-        // Some other error occurred, rejecting the promise.
-        return reject(
-          new Error(`Error verifying HEAD: ${stderr || error?.message}`)
-        );
-      }
+export async function getChangedFilesWithStatus({
+  codepath,
+  cwd,
+  lastCommit,
+  config,
+}: {
+  codepath: string;
+  config: DaisyConfig;
+  lastCommit: string;
+  cwd: string;
+}): Promise<ChangedFiles> {
+  const error = await verifyValidRepo(cwd);
+  if (error) {
+    console.error(error);
+    return {
+      addedFiles: [],
+      modifiedFiles: [],
+      deletedFiles: [],
+    };
+  }
 
-      exec(
-        `git diff --name-status HEAD ${codepath}`,
-        { cwd },
-        (error, stdout, stderr) => {
-          if (error) {
-            reject(error);
-          }
-          if (stderr) {
-            reject(stderr);
-          }
-          const fileStatusList = stdout.split("\n").filter(Boolean);
-          const changedFiles = fileStatusList.map((fileStatus) => {
-            const [status, filePath] = fileStatus.split("\t");
-            return { filePath, status } as FileInfo;
-          });
-
-          Promise.all(
-            changedFiles.map(async (file) => {
-              return new Promise<FileInfo>((resolve, reject) => {
-                exec(
-                  `git diff HEAD -- ${file.filePath}`,
-                  { cwd },
-                  (error, stdout, stderr) => {
-                    if (error) {
-                      reject(error);
-                    }
-                    if (stderr) {
-                      reject(stderr);
-                    }
-                    file.gitDiff = stdout;
-                    resolve(file);
-                  }
-                );
-              });
-            })
-          )
-            .then((result) => {
-              const addedFiles = [];
-              const modifiedFiles = [];
-              const deletedFiles = [];
-
-              for (const file of result) {
-                const fullFilePath = path.join(
-                  config.codeBasePath,
-                  file.filePath
-                );
-                if (!isInvalidFile(fullFilePath, config)) {
-                  const { filePath, status, gitDiff } = file;
-
-                  switch (status) {
-                    case "A":
-                      addedFiles.push({
-                        filePath: path.join(config.codeBasePath, filePath),
-                        gitDiff,
-                        status,
-                      });
-                      break;
-                    case "M":
-                      modifiedFiles.push({
-                        filePath: path.join(config.codeBasePath, filePath),
-                        gitDiff,
-                        status,
-                      });
-                      break;
-                    case "D":
-                      deletedFiles.push({
-                        filePath: path.join(config.codeBasePath, filePath),
-                        gitDiff,
-                        status,
-                      });
-                      break;
-                  }
-                }
-              }
-
-              resolve({ addedFiles, modifiedFiles, deletedFiles });
-            })
-            .catch((error) => reject(error));
-        }
-      );
-    });
+  const changedFiles = await getChangedFiles({
+    codepath,
+    cwd,
+    lastCommit,
   });
+
+  const result = await Promise.all(
+    changedFiles.map(async (file) => getFileDiff({ file, cwd, lastCommit }))
+  );
+
+  const addedFiles: FileGitInfo[] = [];
+  const modifiedFiles: FileGitInfo[] = [];
+  const deletedFiles: FileGitInfo[] = [];
+
+  const fileArrays = {
+    A: addedFiles,
+    M: modifiedFiles,
+    D: deletedFiles,
+  };
+
+  for (const file of result) {
+    const fullFilePath = path.join(config.codeBasePath, file.filePath);
+    if (!isInvalidFile(fullFilePath, config)) {
+      const { filePath, status, gitDiff } = file;
+
+      const fileArray = fileArrays[status];
+
+      if (fileArray) {
+        fileArray.push({
+          filePath: path.join(config.codeBasePath, filePath),
+          gitDiff,
+          status,
+        });
+      }
+    }
+  }
+
+  return { addedFiles, modifiedFiles, deletedFiles };
 }
 
 export type CallAnswerAiEmbeddingApiProps = {
@@ -653,14 +601,16 @@ export const batchAnswerAiEmbeddingsProcessor = async ({
 export type BatchEmbeddingsProcessorProps = {
   files: FileData[];
   config: DaisyConfig;
+  cwd: string;
 };
 
 export const batchEmbeddingsProcessor = async ({
   files,
   config,
+  cwd,
 }: BatchEmbeddingsProcessorProps) => {
   const packageJson = require(path.join(config.codeBasePath, "package.json"));
-  const branch = await getGitBranch();
+  const branch = await getCurrentBranch(cwd);
   if (config.answerAI?.apiKey) {
     await batchAnswerAiEmbeddingsProcessor({
       files,

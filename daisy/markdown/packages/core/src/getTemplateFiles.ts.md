@@ -10,12 +10,12 @@ Script Summary:
 This script exports two functions: `readTemplateFile` and `getTemplateFiles`. `readTemplateFile` reads the contents of a template file given its file path, while `getTemplateFiles` reads the contents of all template files in a directory and returns them as an object.
 
 Internal Functions:
-- `readTemplateFile(filePath: string)`: This function takes a file path as a parameter and reads the contents of the file using the `readFile` function from the `fs/promises` module. It returns the content of the file as a string.
+- `readTemplateFile(filePath: string)`: This function takes a file path as a parameter and reads the contents of the file using the `readFile` function from the `fs/promises` module. It returns the content as a string.
 
 - `getTemplateFiles(templateFilePath: string)`: This function takes a directory path as a parameter and reads the contents of all files in that directory using the `readdir` function from the `fs/promises` module. It then iterates over the files, reads their contents using `readTemplateFile`, and stores the contents in an object with the file names (without extensions) as keys. Finally, it returns the object containing the template contents.
 
 External Functions:
-- `readTemplateFile(filePath: string)`: This function is exported and can be used to read the contents of a template file given its file path. It returns the content of the file as a string.
+- `readTemplateFile(filePath: string)`: This function is exported and can be used to read the contents of a template file given its file path. It returns the content as a string.
 
 - `getTemplateFiles(templateFilePath: string)`: This function is exported and can be used to read the contents of all template files in a directory. It returns an object containing the template contents, with the file names (without extensions) as keys.
 

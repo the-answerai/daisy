@@ -1,0 +1,77 @@
+on:
+  push:
+    tags:
+      - "@answerai/daisy-github-action@*"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js 18
+        uses: actions/setup-node@master
+        with:
+          node-version: 18
+
+      - uses: pnpm/action-setup@v2
+        name: Install pnpm
+        id: pnpm-install
+        with:
+          version: 7
+          run_install: false
+
+      - name: Get pnpm store directory
+        id: pnpm-cache
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path)" >> $GITHUB_OUTPUT
+
+      - uses: actions/cache@v3
+        name: Setup pnpm cache
+        with:
+          path: ${{ steps.pnpm-cache.outputs.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
+
+      - name: Turbo Cache
+        id: turbo-cache
+        uses: actions/cache@v2
+        with:
+          path: node_modules/.cache/turbo
+          key: turbo-${{ github.job }}-${{ github.ref_name }}-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ github.job }}-${{ github.ref_name }}-
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        id: build
+        run: pnpm build
+
+      - name: Package
+        id: package
+        run: pnpm --filter @answerai/daisy-github-action package
+
+      - name: get-package-version
+        id: package-version
+        uses: martinbeentjes/npm-get-version-action@v1.3.1
+        with:
+          path: packages/github-action
+
+      - name: Pushes to the standalone repository
+        uses: cpina/github-action-push-to-another-repository@main
+        env:
+          SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
+        with:
+          source-directory: "packages/github-action"
+          destination-github-username: "Answers-Ai"
+          destination-repository-name: "daisy-github-action"
+          user-email: jaime@theanswer.ai
+          commit-message: "Update to version ${{ github.ref }}"
+          target-branch: "releases/v${{ steps.package-version.outputs.current-version }}"
+          create-target-branch-if-needed: true
