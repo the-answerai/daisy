@@ -76,12 +76,25 @@ export const hasChangedMarkdownFiles = async (
   const { stdout } = await getExecOutput("git", [
     "diff",
     topCommit,
-    `${topCommit}^1`,
+    `${topCommit}~1`,
     "--name-only",
     "--",
     markdownDir,
   ]);
   return stdout.split("\n").filter(Boolean).length > 0;
+};
+
+export const isCurrentHeadAMergeCommit = async () => {
+  const { stdout, stderr } = await getExecOutput(
+    "git",
+    ["rev-parse", "--verify", "--quiet", "HEAD^2"],
+    { ignoreReturnCode: true }
+  );
+  return !stderr && !!stdout;
+};
+
+export const getCommitForMarkdownDiff = async () => {
+  return (await isCurrentHeadAMergeCommit()) ? "HEAD~1" : "HEAD";
 };
 
 export const findCommitWithPrefix = async (prefix: string) => {
