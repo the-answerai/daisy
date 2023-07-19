@@ -1,51 +1,39 @@
 Summary:
-This script is a part of a software application called "Daisy". Its purpose is to automate the process of documenting code changes and creating pull requests for those changes. It uses Git and GitHub APIs to retrieve information about the codebase, identify changed files, and generate documentation.
+This script is a part of a software application called "Daisy". Its purpose is to automate the process of documenting code changes and creating pull requests for those changes. It uses the Daisy framework and interacts with Git and GitHub APIs.
 
 Import statements:
-- `import * as core from "@actions/core";`: This imports the `core` module from the `@actions/core` package. It provides functions for interacting with GitHub Actions, such as setting outputs and logging messages.
-- `import { writeFile } from "fs/promises";`: This imports the `writeFile` function from the built-in `fs/promises` module. It is used to write the contents to a file.
-- `import * as gitUtils from "./gitUtils";`: This imports the `gitUtils` module from a local file named "gitUtils.js". It contains utility functions related to Git operations.
-- `import { memorize, runCompletionsAndCreatePr } from "./run";`: This imports the `memorize` and `runCompletionsAndCreatePr` functions from a local file named "run.js". These functions are responsible for the main logic of the script.
-- `import { getCurrentBranch, getFilesToProcess, init } from "@answerai/daisy-core";`: This imports the `getCurrentBranch`, `getFilesToProcess`, and `init` functions from the `@answerai/daisy-core` package. These functions are used to retrieve information about the codebase and identify files to process.
+- `import * as core from "@actions/core";`: This imports the core module from the `@actions/core` package. It provides functions for logging, setting outputs, and handling failures in GitHub Actions workflows.
+- `import { writeFile } from "fs/promises";`: This imports the `writeFile` function from the built-in `fs/promises` module. It is used to write data to a file asynchronously.
+- `import * as gitUtils from "./gitUtils";`: This imports all the functions from the `gitUtils` module in the current directory. It contains utility functions related to Git operations.
+- `import { memorize, runCompletionsAndCreatePr } from "./run";`: This imports the `memorize` and `runCompletionsAndCreatePr` functions from the `run` module in the current directory. These functions are used to perform specific actions related to the Daisy framework.
+- `import { getCurrentBranch, getFilesToProcess, init } from "@answerai/daisy-core";`: This imports the `getCurrentBranch`, `getFilesToProcess`, and `init` functions from the `@answerai/daisy-core` package. These functions are used to retrieve information about the current Git branch, get a list of files to process, and initialize the Daisy framework.
 - `import { resolve } from "path";`: This imports the `resolve` function from the built-in `path` module. It is used to resolve file paths.
 
 Script Summary:
-The script starts by checking if the required environment variables (`GITHUB_TOKEN` and `ANSWERAI_API_KEY`) are set. If not, it sets a failure message and exits.
+The script starts by checking if the required environment variables (`GITHUB_TOKEN` and `ANSWERAI_API_KEY`) are set. If not, it sets a failure message and exits. Then, it checks if the `setupGitUser` input is set to true. If so, it calls the `setupUser` function from the `gitUtils` module to set up the Git user. Next, it sets the GitHub credentials by writing them to the `.netrc` file. After that, it sets the output variables `memorized` and `documented` to "false".
 
-Next, it checks if the `setupGitUser` input is set to true. If so, it calls the `setupUser` function from the `gitUtils` module to set up the Git user.
+The script then initializes the Daisy framework by calling the `init` function with the current working directory. It retrieves the markdown directory path from the configuration and checks if it is git-ignored using the `isIgnored` function from the `gitUtils` module. If it is git-ignored, it sets a failure message and exits.
 
-Then, it sets the GitHub credentials by writing a `.netrc` file with the `GITHUB_TOKEN`.
+Next, it retrieves the code base path from the configuration and gets the current Git branch using the `getCurrentBranch` function. It also retrieves the latest Daisy commit for the branch using the `getLatestDaisyCommit` function from the `gitUtils` module. It sets the `update` variable to true if there is a last commit.
 
-After that, it sets the initial values for the `memorized` and `documented` outputs.
+Then, it calls the `getFilesToProcess` function to get a list of files to process based on the input parameters. It sets the `needsMemorization` variable to true if there are no files to update and there are changes in the markdown files. It then checks the conditions using a switch statement.
 
-The script then initializes the configuration by calling the `init` function from the `daisy-core` package.
+If there are no files to update and no need for memorization, it logs a message and exits. If there is a need for memorization, it calls the `memorize` function with the configuration and files to update, and sets the `memorized` output to "true". If there are files to update, it logs a message and calls the `runCompletionsAndCreatePr` function with the configuration, files to update, and GitHub token. It sets the `pullRequestNumber` output with the pull request number.
 
-It checks if the Daisy output directory is git-ignored. If it is, it sets a failure message and exits.
-
-Next, it retrieves the current working directory and the current branch.
-
-It gets the latest Daisy commit for the branch and sets the `update` flag based on whether a commit is found.
-
-Then, it retrieves the files to update by calling the `getFilesToProcess` function with the necessary parameters.
-
-The script determines if memorization is needed by checking if there are no files to update and if there are changes in the markdown files. If so, it calls the `memorize` function from the `run` module and sets the `memorized` output to true.
-
-If there are files to update, it calls the `runCompletionsAndCreatePr` function from the `run` module to generate documentation and create a pull request. It sets the `pullRequestNumber` output with the returned pull request number.
-
-Finally, the script handles any errors that occur during execution.
+Finally, the script handles any errors by logging them and setting a failure message.
 
 Internal Functions:
 - None
 
 External Functions:
-- `memorize({ config, files })`: This function is responsible for memorizing the code changes to Pinecone. It takes a configuration object and an array of files to process as parameters. It returns a Promise that resolves when the memorization is complete.
-- `runCompletionsAndCreatePr({ config, files, githubToken })`: This function is responsible for running completions and creating a pull request for the code changes. It takes a configuration object, an array of files to process, and the GitHub token as parameters. It returns a Promise that resolves with the pull request number.
+- `memorize(config: object, files: string[]): Promise<void>`: This function takes a configuration object and an array of file paths as parameters. It performs the memorization process using the Daisy framework and Pinecone. It returns a promise that resolves when the process is complete.
+- `runCompletionsAndCreatePr(config: object, files: string[], githubToken: string): Promise<number>`: This function takes a configuration object, an array of file paths, and a GitHub token as parameters. It runs the completions process using the Daisy framework and creates a pull request for the changes. It returns a promise that resolves with the pull request number.
 
 Interaction Summary:
-This script interacts with the GitHub Actions environment by setting outputs and logging messages. It also interacts with the Git and GitHub APIs to retrieve information about the codebase, identify changed files, and create pull requests.
+This script interacts with the Daisy framework, Git, and GitHub APIs. It uses the Daisy framework to initialize and perform code documentation processes. It interacts with Git to retrieve branch and commit information, and with GitHub to create pull requests.
 
 Developer Questions:
-- How do I set up the required environment variables (`GITHUB_TOKEN` and `ANSWERAI_API_KEY`) for this script to work?
-- How do I modify the script to perform additional actions or customize the behavior?
-- How do I debug issues related to Git operations or API calls?
-- How do I handle errors that occur during execution?
+- How can I modify the script to perform additional actions before or after the documentation process?
+- How can I customize the configuration for the Daisy framework?
+- How can I handle errors or exceptions that occur during the process?
+- How can I extend the script to support additional functionality or integrations?
