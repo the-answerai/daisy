@@ -57,7 +57,7 @@ import { resolve } from "path";
   core.info(`Last Daisy commit: ${lastCommit})`);
   const update = !!lastCommit;
 
-  const filesToUpdate = await getFilesToProcess({
+  let filesToUpdate = await getFilesToProcess({
     inputPath: config.codeBasePath,
     update,
     config,
@@ -79,6 +79,14 @@ import { resolve } from "path";
       return;
     case needsMemorization: {
       core.info("Memorizing to Pinecone...");
+
+      filesToUpdate = await getFilesToProcess({
+        inputPath: config.codeBasePath,
+        update: false,
+        config,
+        cwd,
+        branch,
+      });
 
       await memorize({
         config,
