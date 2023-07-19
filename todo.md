@@ -1,5 +1,0 @@
-- [x] create github action to copy/push github action package into a separate repo
-- [ ] create a gitignore for the github action
-- [ ] Test that action
-- [ ] finish writing the github action
-- [ ] write tests if possible for github action
