@@ -5,7 +5,6 @@ import { memorize, runCompletionsAndCreatePr } from "./run";
 import {
   getCurrentBranch,
   getFilesToProcess,
-  getLatestDaisyCommit,
   init,
 } from "@answerai/daisy-core";
 import { resolve } from "path";
@@ -54,10 +53,11 @@ import { resolve } from "path";
 
   const cwd = config.codeBasePath;
   const branch = await getCurrentBranch(config.codeBasePath);
-  const lastCommit = await getLatestDaisyCommit({ branch, cwd });
+  const lastCommit = await gitUtils.getLatestDaisyCommit(branch);
+  core.info(`Last Daisy commit: ${lastCommit})`);
   const update = !!lastCommit;
 
-  let filesToUpdate = await getFilesToProcess({
+  const filesToUpdate = await getFilesToProcess({
     inputPath: config.codeBasePath,
     update,
     config,
@@ -68,10 +68,11 @@ import { resolve } from "path";
   let needsMemorization = false;
   const needsCompletions = filesToUpdate.length > 0;
   if (!needsCompletions) {
-    const changeMarkdownFiles = await gitUtils.getChangedMarkdownFiles(
-      markdownDirectory
+    const topCommit = await gitUtils.getCommitForMarkdownDiff();
+    needsMemorization = await gitUtils.hasChangedMarkdownFiles(
+      markdownDirectory,
+      topCommit
     );
-    needsMemorization = changeMarkdownFiles.length > 0;
   }
 
   switch (true) {

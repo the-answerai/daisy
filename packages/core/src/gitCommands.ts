@@ -67,6 +67,16 @@ export const getFileDiff = async ({
   };
 };
 
+export const findCommitWithPrefix = async ({
+  cwd,
+  prefix,
+}: {
+  cwd: string;
+  prefix: string;
+}) => {
+  return execAsync(`git log --grep="^${prefix}" -1 --format="%H"`, cwd);
+};
+
 export const getLatestDaisyCommit = async ({
   branch,
   cwd,
@@ -74,12 +84,13 @@ export const getLatestDaisyCommit = async ({
   branch: string;
   cwd: string;
 }) => {
-  const branchCommit = findCommitWithPrefix({
+  const branchCommit = await findCommitWithPrefix({
     cwd,
     prefix: getDaisyCommitPrefixWithBranch(branch),
   });
   return (
-    branchCommit || findCommitWithPrefix({ cwd, prefix: DAISY_COMMIT_PREFIX })
+    branchCommit ||
+    (await findCommitWithPrefix({ cwd, prefix: DAISY_COMMIT_PREFIX }))
   );
 };
 
@@ -104,18 +115,6 @@ export const createNewCommit = async ({
     `git commit --allow-empty -m "${getDaisyCommitPrefixWithBranch(branch)}"`,
     cwd
   );
-};
-
-export const findCommitWithPrefix = async ({
-  cwd,
-  prefix,
-}: {
-  cwd: string;
-  prefix: string;
-}) => {
-  return (
-    await execAsync(`git log --grep="^${prefix}" -1 --format="%H"`, cwd)
-  ).trim();
 };
 
 export const createNewDaisyCommit = async ({

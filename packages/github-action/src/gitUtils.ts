@@ -1,4 +1,8 @@
 import { exec, getExecOutput } from "@actions/exec";
+import {
+  DAISY_COMMIT_PREFIX,
+  getDaisyCommitPrefixWithBranch,
+} from "@answerai/daisy-core";
 
 export const setupUser = async () => {
   await exec("git", ["config", "user.name", `"github-actions[bot]"`]);
@@ -65,12 +69,39 @@ export const isIgnored = async (path: string): Promise<boolean> => {
   return !!stdout;
 };
 
-export const getChangedMarkdownFiles = async (markdownDir: string) => {
+export const hasChangedMarkdownFiles = async (
+  markdownDir: string,
+  topCommit: string
+) => {
   const { stdout } = await getExecOutput("git", [
     "diff",
+    topCommit,
+    `${topCommit}^1`,
     "--name-only",
     "--",
     markdownDir,
   ]);
-  return stdout.split("\n").filter(Boolean);
+  return stdout.split("\n").filter(Boolean).length > 0;
+};
+
+export const findCommitWithPrefix = async (prefix: string) => {
+  const { stdout } = await getExecOutput("git", ["log", `--format=%H %s`]);
+  if (!stdout.trim()) return;
+  return stdout
+    .split("\n")
+    .map((l) => {
+      const firstSpaceIndex = l.indexOf(" ");
+      const hash = l.slice(0, firstSpaceIndex);
+      const message = l.slice(firstSpaceIndex + 1);
+      return { hash, message };
+    })
+    .filter(({ message }) => message.startsWith(prefix))
+    .map(({ hash }) => hash)[0];
+};
+
+export const getLatestDaisyCommit = async (branch: string) => {
+  const branchCommit = await findCommitWithPrefix(
+    getDaisyCommitPrefixWithBranch(branch)
+  );
+  return branchCommit || (await findCommitWithPrefix(DAISY_COMMIT_PREFIX));
 };
