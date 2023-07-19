@@ -6,7 +6,7 @@ Import statements:
 - `DAISY_COMMIT_PREFIX` and `getDaisyCommitPrefixWithBranch` are imported from the `@answerai/daisy-core` package. These constants and functions are used to work with Daisy commits.
 
 Script Summary:
-This script provides a set of functions for performing various Git operations, such as pushing changes, committing changes, and checking the status of the repository.
+This script provides a set of functions for performing various Git operations, such as pushing changes, committing changes, checking the status of the repository, and finding specific commits. These functions can be used to automate Git operations in a software application.
 
 Internal Functions:
 - `setupUser`: This function sets up the Git user by configuring the user name and email.
@@ -18,28 +18,27 @@ Internal Functions:
 - `commitAll`: This function commits all the changes in the repository with a specified commit message.
 - `checkIfClean`: This function checks if the repository is clean, i.e., there are no uncommitted changes.
 - `isIgnored`: This function checks if a specified file or directory is ignored by Git.
-- `hasChangedMarkdownFiles`: This function checks if any markdown files in a specified directory have changed between the top commit and the previous commit.
+- `hasChangedMarkdownFiles`: This function checks if any markdown files in a specified directory have changed.
 - `isCurrentHeadAMergeCommit`: This function checks if the current head is a merge commit.
-- `getCommitForMarkdownDiff`: This function returns the commit to use for comparing markdown file differences. If the current head is a merge commit, it returns the previous commit; otherwise, it returns the current head.
-- `findCommitWithPrefix`: This function finds a commit with a specified prefix in the commit message. It returns the hash of the first matching commit.
-- `getLatestDaisyCommit`: This function gets the latest Daisy commit for a specified branch. It first tries to find a commit with the branch-specific Daisy commit prefix, and if not found, it falls back to the general Daisy commit prefix.
+- `findCommitWithPrefix`: This function finds a commit with a specified prefix in the commit message.
+- `getLatestDaisyCommit`: This function gets the latest Daisy commit for a specified branch.
 
 External Functions:
-- None
+None
 
 Interaction Summary:
-This script provides a set of functions that can be used to interact with a Git repository. These functions can be used to perform various Git operations, such as pushing changes, committing changes, and checking the status of the repository. They can be called from other parts of the application to automate Git-related tasks.
+This script can be used to automate Git operations in a software application. It provides functions for setting up the user, pulling changes, pushing changes, switching branches, resetting changes, committing changes, checking the repository status, checking if a file is ignored, checking if markdown files have changed, checking if the current head is a merge commit, finding commits with specific prefixes, and getting the latest Daisy commit. These functions can be called from other parts of the application to perform Git operations.
 
 Developer Questions:
-- How do I set up the Git user for the actions performed by this script?
-- How do I pull the latest changes from a specific branch?
-- How do I push changes to a specific branch?
+- How do I set up the Git user for automated operations?
+- How do I pull the latest changes from a branch?
+- How do I push changes to a branch?
 - How do I switch to a branch, creating it if it doesn't exist?
 - How do I reset changes in the repository?
 - How do I commit changes with a specific message?
 - How do I check if the repository is clean?
 - How do I check if a file or directory is ignored by Git?
-- How do I check if markdown files have changed between commits?
+- How do I check if markdown files have changed?
 - How do I check if the current head is a merge commit?
 - How do I find a commit with a specific prefix in the commit message?
-- How do I get the latest Daisy commit for a specific branch?
+- How do I get the latest Daisy commit for a branch?
