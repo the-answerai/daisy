@@ -4,16 +4,6 @@ runs:
   using: "node16"
   main: "dist/index.js"
 inputs:
-  cwd:
-    description: Sets the cwd for the node process. Default to `process.cwd()`
-    required: false
-  commit:
-    description: |
-      The commit message. Default to `D.A.I.S.Y updates`
-    required: false
-  title:
-    description: The pull request title. Default to `D.A.I.S.Y updates`
-    required: false
   setupGitUser:
     description: Sets up the git user for commits as `"github-actions[bot]"`. Default to `true`
     required: false
