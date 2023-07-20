@@ -1,15 +1,15 @@
 {
-  "name": "@answerai/daisy-github-workflow",
+  "name": "@answerai/daisy-github-action",
   "version": "0.1.0",
   "description": "D.A.I.S.Y. - Document Automation and Intelligent System. A helpful bot that documents your code for you. It allows you to save it into memory and chat with it using AnswerAI",
-  "main": "index.js",
+  "main": "lib/index.js",
   "private": true,
   "scripts": {
-    "daisy": "node ./index.js",
-    "test": "jest"
-  },
-  "bin": {
-    "daisy": "./index.js"
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "package": "ncc build --source-map --license licenses.txt",
+    "test": "jest",
+    "test:watch": "jest --watch"
   },
   "repository": {
     "type": "git",
@@ -22,9 +22,17 @@
   },
   "homepage": "https://github.com/Answers-AI/daisy#readme",
   "devDependencies": {
-    "@types/node": "^20.4.2"
+    "@types/node": "^20.4.2",
+    "@vercel/ncc": "^0.36.1",
+    "dotenv": "^16.0.3",
+    "typescript": "^5.1.6"
   },
-  "peerDependencies": {
-    "dotenv": "^16.0.3"
+  "dependencies": {
+    "@actions/core": "^1.10.0",
+    "@actions/exec": "^1.1.1",
+    "@actions/github": "^5.1.1",
+    "@answerai/daisy-core": "^0.1.2",
+    "@octokit/core": "^5.0.0",
+    "@octokit/plugin-throttling": "^7.0.0"
   }
 }

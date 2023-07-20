@@ -25,7 +25,6 @@ The "test.js" script interacts with the "initialize" module to perform the initi
 
 Developer Questions:
 - How can I modify the default configurations for the ".daisyrc" file?
-- Can I customize the prompt and template folders' names and locations?
+- Can I customize the prompt and template folders created during initialization?
 - What happens if the test folder already exists before running the tests?
-- How can I add additional test cases to cover more scenarios?
-- Are there any potential issues with file system operations that I should be aware of?
+- How can I add additional test cases to verify other aspects of the initialization process?

@@ -1,36 +1,35 @@
 Script Purpose and Role:
-The purpose of this script is to provide a command-line interface for running the D.A.I.S.Y. (Documentation and Information System) tool. D.A.I.S.Y. is a code documentation tool that generates documentation based on the codebase provided. This script allows users to start D.A.I.S.Y., memorize code to Pinecone, update changed files, and list all saved files.
+The purpose of this script is to provide a command-line interface for running the D.A.I.S.Y. (Documentation and Information System) tool. D.A.I.S.Y. is a code documentation tool that generates documentation for a given codebase. This script allows users to start D.A.I.S.Y., memorize code to Pinecone (a code search tool), update changed files, and list saved files.
 
 Script Structure:
-The script starts by importing necessary modules and dependencies. It then creates an instance of the Commander Command, defines different commands (start, mem, update, list), and sets the required number of commands to 1. Finally, it shows help if no command is specified.
+The script starts by importing necessary modules and dependencies. It then defines several functions for user interaction and confirmation prompts. After that, it creates an instance of the Commander Command class and defines several commands for the D.A.I.S.Y. tool. Finally, it parses the command-line arguments and executes the corresponding actions.
 
 Import Statements:
-- `import daisy, { DaisyConfig, FileData, generateCostSummary, init, writePreviewMarkdownToFile } from "@answerai/daisy-core";`: Imports the `daisy` function and various types and functions from the `@answerai/daisy-core` module. These imports are used to run the D.A.I.S.Y. tool and perform operations related to file data and cost summary generation.
-
-- `import readline from "readline/promises";`: Imports the `readline` module from Node.js, specifically the `promises` submodule. This module is used for reading input from the command line.
-
-- `import { Command } from "commander";`: Imports the `Command` class from the `commander` module. This module is used to create a command-line interface with various commands and options.
-
-- `import { resolve } from "path";`: Imports the `resolve` function from the `path` module. This function is used to resolve file paths.
-
-Variable Usage:
-- `rl`: Represents the readline interface created using `readline.createInterface()`. It is used for reading input from the command line.
-
-- `codeBasePath`: Represents the path to the codebase. It is set based on the value of the `CODE_BASE_PATH` environment variable or the current working directory.
+- `import daisy, { DaisyConfig, FileData, generateCostSummary, init, writePreviewMarkdownToFile } from "@answerai/daisy-core";`: Imports the D.A.I.S.Y. tool and its related dependencies from the "@answerai/daisy-core" package.
+- `import readline from "readline";`: Imports the readline module for reading user input from the command line.
+- `import { Command } from "commander";`: Imports the Command class from the "commander" package.
+- `import { resolve } from "path";`: Imports the resolve function from the "path" module for resolving file paths.
 
 Functions:
-- `confirmCompletionsFunction(files: FileData[], config: DaisyConfig)`: This function is an asynchronous function that prompts the user to preview the prompts before proceeding with the documentation generation. It writes preview markdown files, generates a cost summary, and asks the user for confirmation to proceed. It returns a boolean value indicating whether to proceed or not.
-
-- `proceedWithoutAsking(files: FileData[], config: DaisyConfig)`: This function is an asynchronous function that generates a cost summary and proceeds without asking for confirmation. It returns a boolean value indicating to proceed.
+- `question`: A function that prompts the user with a question and returns their answer as a Promise. It uses the readline module to read input from the command line.
+- `confirmCompletionsFunction`: A function that takes an array of FileData objects and a DaisyConfig object as parameters. It prompts the user for confirmation to proceed with the documentation generation process. If the user chooses to preview the prompts, it writes preview markdown files and asks for confirmation again. Finally, it generates a cost summary and asks for confirmation to proceed.
+- `proceedWithoutAsking`: A function that takes an array of FileData objects and a DaisyConfig object as parameters. It generates a cost summary and returns true without asking for confirmation.
+- `program.action`: An async function that is executed when a command is invoked. It starts D.A.I.S.Y. with the specified options and configuration.
 
 Loops and Conditional Statements:
-- The script does not contain any loops or conditional statements.
+- The script does not contain any loops or complex conditional statements. It mainly relies on the Commander library for command parsing and execution.
 
-Known Issues or Bugs:
-- The "list" command is not implemented. The comment suggests that the functionality needs to be implemented.
+Variable Usage:
+- `codeBasePath`: A variable that stores the path to the code base. It is initialized with the value of the environment variable "CODE_BASE_PATH" or the current working directory.
+- `previewAnswer`: A variable that stores the user's answer to the preview prompt.
+- `summary`: A variable that stores the cost summary generated by the D.A.I.S.Y. tool.
+- `answer`: A variable that stores the user's answer to the confirmation prompt.
 
-Todo Items:
-- Implement the functionality for the "list" command.
+Bugs/Issues and Suggestions:
+- The script does not handle errors or exceptions. It would be beneficial to add error handling and provide meaningful error messages to the user.
+- The script does not handle the case when the user does not provide any command. It would be helpful to display a message or show the help information in such cases.
+- The "list" command is currently disabled with a TODO comment. It would be good to implement this functionality if it is required.
+- The script could benefit from more detailed comments and documentation to improve code readability and maintainability.
 
 Summary:
-This script provides a command-line interface for running the D.A.I.S.Y. tool. It allows users to start D.A.I.S.Y., memorize code to Pinecone, update changed files, and list all saved files. The script imports necessary modules and dependencies, defines commands and options using the Commander module, and handles user input and interactions. There is a known issue with the "list" command that needs to be implemented.
+This script provides a command-line interface for running the D.A.I.S.Y. code documentation tool. It allows users to start D.A.I.S.Y., memorize code to Pinecone, update changed files, and list saved files. The script imports necessary modules and defines functions for user interaction. It uses the Commander library for command parsing and execution. However, it lacks error handling and does not handle some edge cases. Overall, with some improvements, this script can be a useful tool for code documentation in a software application.

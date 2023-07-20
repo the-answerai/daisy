@@ -1,38 +1,38 @@
-**File: configuration.json**
-
+{{prompt}}
+{{fileContents}}
 Summary:
-This configuration file is used in a larger application called D.A.I.S.Y. (Document Automation and Intelligent System). It provides information about the application, its dependencies, and scripts to be executed. The file also includes details about the repository, author, license, bugs, and homepage.
+The provided configuration file is for a larger application called D.A.I.S.Y. (Document Automation and Intelligent System). It is a bot that helps in documenting code by saving it into memory and allowing users to chat with it using AnswerAI. The configuration file contains various settings and dependencies required for the application to run.
 
 Service:
-D.A.I.S.Y. is a bot that automates code documentation. It allows users to save code into memory and interact with it using AnswerAI, a chatbot service.
+D.A.I.S.Y. is a document automation and intelligent system that assists in code documentation. It uses AnswerAI, a chatbot interface, to interact with users and store code documentation in memory.
 
 Configuration Summary:
-The configuration file sets up the basic information and behavior of the D.A.I.S.Y. application. It specifies the name, version, description, main file, and scripts to be executed. It also defines the repository URL, author, license, bugs URL, homepage, and dependencies.
+The configuration file sets up the basic information about the application, such as its name, version, description, main file, and license. It also includes scripts for building, testing, and releasing the application. Additionally, it specifies the repository URL, author information, and bug tracking URL. The file lists the dependencies required for the application, including "@changesets/cli", "husky", "jest", and "turbo".
 
 Configuration Breakdown:
-- **name**: Specifies the name of the application.
-- **version**: Specifies the version of the application.
-- **description**: Provides a brief description of the application.
-- **main**: Specifies the main file of the application.
-- **scripts**: Defines custom scripts to be executed, such as "daisy", "build", and "dev".
-- **repository**: Specifies the type and URL of the repository where the application is hosted.
-- **author**: Provides the name and email of the author of the application.
-- **license**: Specifies the license under which the application is distributed.
-- **bugs**: Specifies the URL for reporting issues or bugs.
-- **homepage**: Provides the URL of the application's homepage.
-- **dependencies**: Lists the required dependencies for the application, including packages like "@changesets/cli", "dotenv-cli", "husky", "jest", and "turbo".
+- "name": Specifies the name of the application.
+- "version": Specifies the version of the application.
+- "description": Provides a brief description of the application.
+- "main": Specifies the main file of the application.
+- "scripts": Defines various scripts for building, testing, and releasing the application.
+- "repository": Specifies the type and URL of the repository.
+- "author": Specifies the author of the application.
+- "license": Specifies the license under which the application is distributed.
+- "bugs": Specifies the URL for bug tracking.
+- "homepage": Specifies the URL of the application's homepage.
+- "dependencies": Lists the dependencies required for the application.
 
 Interaction Summary:
-This configuration file sets up the basic information and behavior of the D.A.I.S.Y. application. It defines the scripts to be executed, specifies the dependencies required for the application to function, and provides important details such as the repository URL, author information, and license.
+The configuration file sets up the necessary information and dependencies for the D.A.I.S.Y. application. It allows the application to be built, tested, and released using the defined scripts. The dependencies listed in the file are essential for the application to function properly.
 
 Developer Questions:
-1. How can I add or modify custom scripts in the application?
-2. What are the required dependencies for the application and how can I update them?
-3. How can I change the repository URL or specify a different repository type?
-4. Where can I find the application's homepage and how can I update it?
-5. How can I report bugs or issues related to the application?
-6. How can I change the author information or add multiple authors?
-7. How can I change the license under which the application is distributed?
-8. How can I configure the main file of the application?
-9. How can I execute the "daisy", "build", or "dev" scripts defined in the configuration?
-10. How can I integrate AnswerAI chatbot service with the D.A.I.S.Y. application?
+1. How do I build the application using the defined script?
+2. How do I run the application in development mode?
+3. How do I release a new version of the application?
+4. How do I run the tests for the application?
+5. How do I update the version of the dependencies?
+6. How do I configure the repository URL and bug tracking URL?
+7. How do I add or modify scripts in the configuration file?
+8. How do I add or remove dependencies from the application?
+9. How do I update the author information in the configuration file?
+10. How do I update the license for the application?

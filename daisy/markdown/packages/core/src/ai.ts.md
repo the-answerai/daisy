@@ -28,5 +28,5 @@ Developer Questions:
 - How do I configure the AnswerAI API key?
 - How do I configure the OpenAI API?
 - How do I use the `createChatCompletion` function to generate chat completions?
-- How do I use the `createOpenAiEmbedding` function to generate embeddings?
+- How do I use the `createOpenAiEmbedding` function to create embeddings?
 - What error handling is in place for API requests?

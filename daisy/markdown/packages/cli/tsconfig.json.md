@@ -25,7 +25,7 @@ The configuration file is set up to customize the behavior of the TypeScript com
 
 Configuration Breakdown:
 - `compilerOptions`: Specifies options for the TypeScript compiler.
-  - `lib`: An array of libraries to include. In this case, it includes the "dom" library for DOM-related features and the "ES2015" library for ES2015 language features.
+  - `lib`: An array of libraries to include. In this case, it includes the "dom" library for DOM-related features and the "ES2015" library for ES2015 features.
   - `baseUrl`: Specifies the base URL for module resolution. In this case, it is set to the current directory.
   - `outDir`: Specifies the output directory for compiled files. In this case, it is set to "dist".
 - `extends`: Specifies another configuration file to extend. In this case, it extends the "tsconfig/node.json" file.
@@ -33,16 +33,12 @@ Configuration Breakdown:
 - `exclude`: Specifies which files to exclude from the compilation process. It excludes the "dist", "build", and "node_modules" directories.
 
 Interaction Summary:
-This configuration file interacts with the TypeScript compiler to customize its behavior. It sets options related to the compiler, includes and excludes specific files from the compilation process, and extends another configuration file for additional settings. The configuration file helps ensure that the TypeScript code is compiled correctly and that the output is placed in the specified directory.
+The configuration file interacts with the TypeScript compiler to customize its behavior. It sets options related to libraries, module resolution, output directory, and file inclusion/exclusion. These settings affect how the TypeScript compiler compiles the source code of the application.
 
 Developer Questions:
-1. How can I add additional libraries to the compilation process?
-2. Can I change the base URL for module resolution to a different directory?
-3. What happens if I remove the "extends" property or change the extended configuration file?
-4. How can I include or exclude specific files or directories from the compilation process?
-5. Can I change the output directory for compiled files to a different location?
-6. Are there any other compiler options that can be customized in this configuration file?
-7. How does the "include" property handle nested directories and subdirectories?
-8. What is the purpose of excluding the "dist", "build", and "node_modules" directories?
-9. Can I use a different configuration file for different environments or build processes?
-10. How does this configuration file affect the overall build process and output of the application?
+1. What libraries are included in the compilation process and why?
+2. How does the base URL for module resolution affect the application's module loading behavior?
+3. Where are the compiled files outputted and why was the "dist" directory chosen?
+4. What is the purpose of extending another configuration file and what settings does it provide?
+5. How are the files included and excluded from the compilation process determined?
+6. Are there any other configuration options that can be added or modified to further customize the compiler's behavior?
