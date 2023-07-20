@@ -1,5 +1,11 @@
 # @answerai/daisy-github-action
 
+## 0.1.2
+
+### Patch Changes
+
+- 9eccc38: Updated the name of the daisy github action and added a README
+
 ## 0.1.1
 
 ### Patch Changes
