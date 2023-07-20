@@ -106,3 +106,5 @@ dist
 .DS_Store
 
 daisy/preview
+
+packages/github-action/resources
