@@ -5,12 +5,8 @@ import {
 } from "@answerai/daisy-core";
 
 export const setupUser = async () => {
-  await exec("git", ["config", "user.name", `"github-actions[bot]"`]);
-  await exec("git", [
-    "config",
-    "user.email",
-    `"github-actions[bot]@users.noreply.github.com"`,
-  ]);
+  await exec("git", ["config", "user.name", `"daisy[bot]"`]);
+  await exec("git", ["config", "user.email", `"daisy@theanswer.ai"`]);
 };
 
 export const pullBranch = async (branch: string) => {
