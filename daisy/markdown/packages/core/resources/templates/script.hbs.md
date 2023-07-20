@@ -37,23 +37,25 @@ Loops and Conditional Statements:
 The script includes loops and conditional statements to control the flow of execution and make decisions based on certain conditions. These constructs are used to iterate over data, perform calculations, and handle different scenarios.
 
 Variable Usage:
-Variables are used throughout the script to store and manipulate data. They are named descriptively to indicate their purpose and are used to pass values between functions, perform calculations, and store intermediate results.
+Variables are used throughout the script to store and manipulate data. They are named descriptively and follow a consistent naming convention, making it easier to understand their purpose and usage.
 
 Potential Bugs or Issues:
-1. [Describe any known bugs or issues with the script]
-   - Suggested Solution: [Provide a suggested solution or workaround for the bug or issue]
+1. [Bug/Issue 1]: [Description of the bug/issue]
+   - Solution: [Suggested solution to fix the bug/issue]
 
-2. [Describe any other potential bugs or issues with the script]
-   - Suggested Solution: [Provide a suggested solution or workaround for the bug or issue]
+2. [Bug/Issue 2]: [Description of the bug/issue]
+   - Solution: [Suggested solution to fix the bug/issue]
 
-Comprehensive Summary:
-This script is an essential component of the broader software application as it provides functionality related to data processing. It contains a set of functions and classes that can be used to manipulate data and perform calculations. The script's structure is organized with import statements at the beginning, followed by the definition of classes and functions. The main function serves as the entry point of the script and calls other functions to perform the desired task. The script utilizes loops and conditional statements to control the flow of execution and make decisions based on certain conditions. Variables are used to store and manipulate data throughout the script. There are a few potential bugs or issues identified, along with suggested solutions or workarounds. Developers working with this component may have questions related to debugging, and these should be addressed in the documentation.
+[Continue listing all potential bugs or issues with their suggested solutions]
+
+Summary:
+In summary, this script serves a specific purpose within the broader software application. It contains a set of functions and classes that manipulate data and perform calculations. The script's structure is organized, with import statements at the beginning, followed by the definition of classes and functions. The script utilizes loops and conditional statements to control the flow of execution. Variables are used to store and manipulate data. There are a few potential bugs or issues that need to be addressed. Overall, this script provides functionality related to data processing and can be modified or extended to suit specific requirements.
 
 Known Issues or Bugs:
-1. [List any known issues or bugs with the component]
+1. [Bug/Issue 1]: [Description of the bug/issue]
+   - Todo: [Action item to address the bug/issue]
 
-Todo Items:
-1. [List any tasks or improvements that need to be addressed]
+2. [Bug/Issue 2]: [Description of the bug/issue]
+   - Todo: [Action item to address the bug/issue]
 
-Developer Questions:
-1. [List any questions developers may have when debugging or working with this component]
+[Continue listing all known issues or bugs with their corresponding action items]

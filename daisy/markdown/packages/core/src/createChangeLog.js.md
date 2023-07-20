@@ -22,5 +22,4 @@ Developer Questions:
 - How does the `getChangedFiles` function work and what does it return?
 - What parameters does the `createChatCompletion` function accept and what does it return?
 - How are the summaries stored and processed in the `summaryArray`?
-- How can I adjust the temperature value for the `createChatCompletion` function?
-- What further processing needs to be done on the `summaryArray`?
+- What further processing is done with the `summaryArray` and how is it used?

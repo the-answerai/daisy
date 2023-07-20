@@ -10,21 +10,19 @@ Script Summary:
 This script exports two functions: `readTemplateFile` and `getTemplateFiles`. `readTemplateFile` reads the contents of a template file given its file path, while `getTemplateFiles` reads the contents of all template files in a directory and returns them as an object.
 
 Internal Functions:
-- `readTemplateFile(filePath: string)`: This function takes a file path as a parameter and reads the contents of the file using the `readFile` function from the `fs/promises` module. It returns the content as a string.
-
-- `getTemplateFiles(templateFilePath: string)`: This function takes a directory path as a parameter and reads the contents of all files in that directory using the `readdir` function from the `fs/promises` module. It then iterates over the files, reads their contents using `readTemplateFile`, and stores the contents in an object with the file names (without extensions) as keys. Finally, it returns the object containing the template contents.
+- `readTemplateFile(filePath: string) => Promise<string>`: This function takes a file path as a parameter and returns a promise that resolves to the contents of the file. It uses the `readFile` function from the `fs/promises` module to read the file.
+- `getTemplateFiles(templateFilePath: string) => Promise<Record<string, string>>`: This function takes a directory path as a parameter and returns a promise that resolves to an object containing the contents of all template files in the directory. It uses the `readdir` function from the `fs/promises` module to get the list of files in the directory, and then iterates over each file to read its contents using the `readTemplateFile` function. The contents are stored in the `templates` object, where the keys are the file names without extensions and the values are the file contents.
 
 External Functions:
-- `readTemplateFile(filePath: string)`: This function is exported and can be used to read the contents of a template file given its file path. It returns the content as a string.
-
-- `getTemplateFiles(templateFilePath: string)`: This function is exported and can be used to read the contents of all template files in a directory. It returns an object containing the template contents, with the file names (without extensions) as keys.
+- `readTemplateFile(filePath: string) => Promise<string>`: This function takes a file path as a parameter and returns a promise that resolves to the contents of the file.
+- `getTemplateFiles(templateFilePath: string) => Promise<Record<string, string>>`: This function takes a directory path as a parameter and returns a promise that resolves to an object containing the contents of all template files in the directory.
 
 Interaction Summary:
-This script can be used by other parts of the application that need to read and retrieve the contents of template files. It provides a convenient way to read individual template files or all template files in a directory.
+This script can be used by other parts of the application that need to read template files. The `readTemplateFile` function can be used to read the contents of a single template file, while the `getTemplateFiles` function can be used to read the contents of all template files in a directory.
 
 Developer Questions:
-- How do I use the `readTemplateFile` function to read the contents of a template file?
-- How do I use the `getTemplateFiles` function to read the contents of all template files in a directory?
-- What format are the template contents returned in?
-- What happens if the specified file or directory does not exist?
-- Are there any performance considerations when using these functions with large template files or directories?
+- How do I use the `readTemplateFile` function to read a template file?
+- How do I use the `getTemplateFiles` function to read all template files in a directory?
+- What format are the template files returned in by the `getTemplateFiles` function?
+- What happens if the file or directory paths provided to the functions are invalid?
+- Are there any performance considerations when using these functions to read large template files or directories with a large number of files?

@@ -25,6 +25,7 @@ This script interacts with the GitHub API to create or update pull requests and 
 
 Developer Questions:
 - How do I set up the GitHub API client with rate limiting functionality?
-- How do I run the memorization task?
-- How do I generate the pull request message?
-- How do I run the completions task and create or update a pull request?
+- How do I run the completions and memorization tasks?
+- How do I create or update a pull request?
+- How do I generate the pull request message based on the file data and branch name?
+- How do I handle cases where a pull request already exists for the completions branch?

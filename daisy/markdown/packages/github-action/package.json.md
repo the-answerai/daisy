@@ -7,32 +7,34 @@ Service:
 D.A.I.S.Y. is a code documentation bot that automates the process of documenting code. It integrates with AnswerAI, a chatbot platform, to provide a conversational interface for interacting with the code documentation.
 
 Configuration Summary:
-The configuration file sets up the basic information about the application, such as its name, version, description, and author. It also defines the main entry point of the application, the scripts for building, testing, and running the application, and the dependencies required for development and runtime.
+The configuration file specifies the name, version, description, main file, and other metadata about the application. It also includes scripts for building, testing, and packaging the application. Additionally, it lists the dependencies and devDependencies required for the application to function properly.
 
 Configuration Breakdown:
-- "name": Specifies the name of the application.
-- "version": Specifies the version of the application.
-- "description": Provides a brief description of the application.
-- "main": Specifies the main entry point of the application.
-- "private": Indicates that the application is private and should not be published.
-- "scripts": Defines various scripts for building, testing, and running the application.
-- "bin": Specifies the executable file for the application.
-- "repository": Specifies the type and URL of the repository where the application is hosted.
-- "author": Specifies the author of the application.
-- "license": Specifies the license under which the application is distributed.
-- "bugs": Specifies the URL for reporting issues or bugs.
-- "homepage": Specifies the URL of the application's homepage.
-- "devDependencies": Lists the development dependencies required for the application.
-- "dependencies": Lists the runtime dependencies required for the application.
+- name: The name of the application.
+- version: The version number of the application.
+- description: A brief description of the application.
+- main: The entry point file for the application.
+- private: A flag indicating that the application is private.
+- scripts: Various scripts for building, testing, and packaging the application.
+- repository: Information about the Git repository where the application is hosted.
+- author: The author of the application.
+- license: The license under which the application is distributed.
+- bugs: The URL for reporting bugs.
+- homepage: The URL for the application's homepage.
+- devDependencies: Dependencies required for development purposes.
+- dependencies: Dependencies required for the application to run.
 
 Interaction Summary:
-The configuration file provides the necessary information and settings for the D.A.I.S.Y. application to function correctly. It defines the entry point, scripts, dependencies, and other metadata required for building, testing, and running the application. It also specifies the repository, author, license, and other details related to the application's development and distribution.
+The configuration file provides essential information and settings for the D.A.I.S.Y. application. It specifies the entry point, dependencies, and scripts for building, testing, and packaging the application. It also includes metadata such as the name, version, description, and license.
 
 Developer Questions:
-1. How do I build the application using the defined scripts?
+1. How do I build the application?
 2. How do I run the application in development mode?
-3. What are the dependencies required for development and runtime?
-4. How do I report issues or bugs related to the application?
-5. Where can I find the documentation or homepage of the application?
-6. How do I configure the application to work with AnswerAI?
-7. How do I customize the application's behavior using the configuration file?
+3. How do I package the application?
+4. How do I run the tests?
+5. How do I watch for changes and run tests automatically?
+6. How do I report bugs?
+7. How do I find the documentation for the application?
+8. How do I add or update dependencies?
+9. How do I add or update devDependencies?
+10. How do I contact the author of the application?
