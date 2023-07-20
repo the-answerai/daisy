@@ -24,12 +24,8 @@ import { resolve } from "path";
     return;
   }
 
-  let setupGitUser = core.getBooleanInput("setupGitUser");
-
-  if (setupGitUser) {
-    core.info("setting git user");
-    await gitUtils.setupUser();
-  }
+  core.info("setting git user");
+  await gitUtils.setupUser();
 
   core.info("setting GitHub credentials");
   await writeFile(

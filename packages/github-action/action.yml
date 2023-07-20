@@ -5,7 +5,6 @@ runs:
   main: "dist/index.js"
 inputs:
   setupGitUser:
-    description: Sets up the git user for commits as `"github-actions[bot]"`. Default to `true`
     required: false
     default: true
 outputs:
