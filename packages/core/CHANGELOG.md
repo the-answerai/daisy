@@ -1,5 +1,11 @@
 # @answerai/daisy-core
 
+## 0.1.3
+
+### Patch Changes
+
+- 00995b5: Some changes to support the daisy github action and some workflows to publish and use this action
+
 ## 0.1.2
 
 ### Patch Changes
