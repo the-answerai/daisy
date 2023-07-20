@@ -9,23 +9,22 @@ Import statements:
 - `dirname` from "path": This import is used to get the directory name of a file path.
 
 Script Summary:
-The script defines several functions that handle different aspects of the documentation process. It also exports a default function called "main" that serves as the entry point for running the script. The "main" function orchestrates the different steps of the documentation process based on the provided configuration.
+The script consists of several functions that handle different aspects of the documentation process. The main function, `main`, orchestrates the entire process by calling other functions based on the provided configuration. The script also exports the `getFilesToProcess` function, which retrieves the files to be processed based on the provided input path and configuration.
 
 Internal Functions:
-- `getFilesToProcess`: This function retrieves the files to process based on the provided input path, update flag, configuration, current working directory, and branch. It uses the "fileProcessor" function to process all files initially. If the update flag is set, it checks for changes in files since the last Daisy commit and filters the files to process accordingly.
-- `runCompletions`: This function runs the completions process for the provided files and configuration. It splits the files into two categories: files to skip completions for and files to document. It then writes the responses to markdown files for the files to skip completions and runs the batch completion processor for the files to document. If the skipGit flag is not set, it creates a new Daisy commit and tag.
-- `runMemorization`: This function runs the memorization process for the provided files and configuration. It uses the batch embeddings processor to generate embeddings for the files.
-- `main`: This is the entry point function for running the script. It retrieves the input path, current working directory, and branch based on the provided arguments or configuration. It then calls the "getFilesToProcess" function to get the files to process. If the skipCompletion flag is not set, it calls the "runCompletions" function. If the memorize flag is set, it calls the "runMemorization" function.
+- `getFilesToProcess`: This function retrieves the files to be processed based on the provided input path, update flag, configuration, current working directory, and branch. It uses the `fileProcessor` function to process all files initially and then filters the files based on the update flag and changed files since the last commit. It returns an array of `FileData` objects.
+- `runCompletions`: This function runs the completions process for the provided files and configuration. It splits the files into two categories: files to skip completions and files for documentation. It then writes the skip completion files directly to markdown files and processes the files for documentation using the `batchCompletionProcessor` function. If the skipGit flag is not set, it also creates a new commit and tag using the `createNewDaisyCommit` function. It returns nothing.
+- `runMemorization`: This function runs the memorization process for the provided files and configuration. It uses the `batchEmbeddingsProcessor` function to generate embeddings for the files. It returns nothing.
 
 External Functions:
-- None
+- `main`: This function is the entry point of the script. It takes several parameters, including skipCompletion, update, inputPath, config, memorize, and confirmCompletionsFunction. It determines the input path based on the provided inputPath or the code base path from the configuration. It retrieves the current working directory and branch. It then calls the `getFilesToProcess` function to get the files to process. If skipCompletion is false, it calls the `runCompletions` function. If memorize is true, it calls the `runMemorization` function.
 
 Interaction Summary:
-This script interacts with other modules in the application, such as "fileProcessor" and "gitCommands", to perform different steps of the documentation process. It also relies on the provided configuration to determine the behavior of the script.
+This script interacts with other modules in the application, such as the "fileProcessor" module for processing files, the "gitCommands" module for interacting with Git, and the "types" module for defining data structures. It also relies on external functions provided through the `confirmCompletionsFunction` parameter.
 
 Developer Questions:
-- How can I configure the script to update existing documentation instead of creating new documentation from scratch?
-- How can I customize the behavior of the completions process?
-- How can I extend the script to support additional steps in the documentation process?
-- How can I handle deleted files during the update process?
-- How can I handle errors or exceptions that may occur during the documentation process?
+- How can I configure the script to update existing documentation?
+- How can I configure the script to create new documentation from scratch?
+- How does the script handle deleted files?
+- How can I customize the behavior of the `confirmCompletionsFunction` function?
+- How can I extend the script to perform additional processing steps on the files?

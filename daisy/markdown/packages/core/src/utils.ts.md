@@ -35,8 +35,8 @@ Variable Usage:
 
 Potential Bugs or Issues:
 - The `compileCompletionPrompts` function catches errors and logs them to the console, but it does not handle the error in any other way. It would be better to throw an error or return an error object to provide more information to the caller.
-- The `getCompletionModelBasedOnTokenSize` function currently only returns a model name for a specific token range. It would be more flexible to allow for different models and token ranges to be configured.
+- The `getCompletionModelBasedOnTokenSize` function currently only returns a model name for a specific token range. It would be more flexible to define a mapping of token ranges to model names and use that to determine the appropriate model.
 - The `getEstimatedPricing` function only calculates the pricing based on the context tokens and does not take into account the response tokens. This could lead to inaccurate pricing estimates.
 
 Summary:
-This script provides various functions and utilities for text processing and token counting. It includes functionality for reading files, compiling prompts, counting tokens, determining the appropriate completion model, estimating pricing, generating cost summaries, and executing commands asynchronously. The script uses external dependencies such as the GPT3Tokenizer, Handlebars, and child_process modules. It exports several functions for external use. There are some potential issues with error handling, model configuration, and pricing estimation that could be addressed for improved functionality.
+This script provides various functions and utilities for text processing and token counting. It includes functionality for reading files, compiling prompts, counting tokens, determining the appropriate completion model based on token size, estimating pricing, generating cost summaries, and executing commands asynchronously. The script uses external dependencies such as the GPT3Tokenizer, Handlebars, and child_process modules. There are some potential issues with error handling, model selection, and pricing estimation that could be addressed for improved functionality.

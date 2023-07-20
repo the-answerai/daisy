@@ -37,5 +37,5 @@ Developer Questions:
 6. How do I publish the application with a different access level?
 7. How do I report bugs or issues with the application?
 8. How do I configure the application for development purposes?
-9. How do I run the application in development mode?
-10. How do I run tests for the application?
+9. How do I run tests for the application?
+10. How do I update the TypeScript version used by the application?

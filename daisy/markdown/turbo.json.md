@@ -11,7 +11,7 @@ The configuration file sets up global dependencies, global environment variables
 
 Configuration Breakdown:
 - "$schema": Specifies the schema URL for validating the configuration file.
-- "globalDependencies": Defines global dependencies using glob patterns.
+- "globalDependencies": Defines global dependencies using glob patterns to match specific files.
 - "globalEnv": Specifies global environment variables.
 - "pipeline": Defines the pipeline with different stages.
   - "build": Specifies the build stage with settings such as output mode, dependencies, and outputs.
@@ -19,12 +19,13 @@ Configuration Breakdown:
   - "dev": Specifies the dev stage with dependencies and caching settings.
 
 Interaction Summary:
-This configuration file interacts with the Turbo Build service by defining the pipeline stages and their respective settings. It allows developers to customize the build process, specify dependencies, and control caching behavior.
+This configuration file interacts with the rest of the application by defining dependencies, environment variables, and the pipeline stages. It influences the build process, linting, and development mode.
 
 Developer Questions:
-1. How can I add additional global dependencies to the application?
-2. What are the available options for the "outputMode" in the build stage?
-3. How can I modify the outputs for the build stage?
-4. What is the purpose of the lint stage and how can I configure it?
-5. How does the caching setting in the dev stage affect the application's development process?
-6. Can I add more stages to the pipeline and how do I configure them?
+1. How can I add or modify global dependencies?
+2. How can I add or modify global environment variables?
+3. What is the purpose of each pipeline stage and how do they interact?
+4. How can I change the output mode for the build stage?
+5. How can I add or modify the outputs for the build stage?
+6. How can I enable linting and specify its outputs?
+7. How can I modify the dependencies and caching settings for the dev stage?
