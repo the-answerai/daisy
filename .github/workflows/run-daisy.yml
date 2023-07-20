@@ -59,6 +59,10 @@ jobs:
         id: build
         run: pnpm build
 
+      - name: Package
+        id: package
+        run: pnpm --filter @answerai/daisy-github-action package
+
       - name: Runs daisy completions or memorizations
         id: daisy
         uses: ./packages/github-action
