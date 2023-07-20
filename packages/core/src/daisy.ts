@@ -57,11 +57,6 @@ export const getFilesToProcess = async ({
       );
 
       console.log("Done finding changed files.");
-
-      console.log(
-        "allFilesToProcess:",
-        allFilesToProcess.map((f) => f.filePath)
-      );
     } else {
       console.log(
         "No previous daisy commit found. Documenting all files in codebase."
