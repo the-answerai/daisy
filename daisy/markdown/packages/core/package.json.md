@@ -21,21 +21,21 @@ Configuration Breakdown:
 - license: The license under which the application is distributed.
 - bugs: The URL for reporting issues.
 - homepage: The URL of the application's homepage.
-- dependencies: The required dependencies for the application.
-- devDependencies: The development dependencies for the application.
-- peerDependencies: The peer dependencies for the application.
+- dependencies: The external libraries and packages required by the application.
+- devDependencies: The development dependencies required for building and testing the application.
+- peerDependencies: The dependencies that must be installed by the application's consumers.
 
 Interaction Summary:
-The configuration file provides essential information and settings for the application to function properly. It specifies the dependencies required for the application to run, as well as scripts for building, testing, and running the application. The repository information allows for version control and collaboration, while the author, license, bugs, and homepage fields provide additional information about the application.
+The configuration file provides essential information and settings for the D.A.I.S.Y. application. It specifies the dependencies required for the application to function properly and defines scripts for building, testing, and running the application. The configuration also includes metadata such as the author, license, and repository information.
 
 Developer Questions:
-1. How do I add a new dependency to the application?
-2. How do I run the build script?
-3. How do I run the tests?
-4. How do I configure the application to use a different main file?
-5. How do I change the version number of the application?
-6. How do I publish the package with a different access level?
-7. How do I report a bug or issue with the application?
-8. How do I configure the application to use a different Git repository?
-9. How do I add a new script to the configuration file?
-10. How do I update the development dependencies for the application?
+1. How do I build the application using the provided scripts?
+2. How do I run the application in development mode?
+3. How do I run the tests for the application?
+4. How do I configure the application to use a different Git repository?
+5. How do I add or update dependencies for the application?
+6. How do I configure the application to publish the package with a different access level?
+7. How do I report bugs or issues with the application?
+8. How do I configure the application to use a different homepage URL?
+9. How do I configure the application to use a different license?
+10. How do I configure the application to use a different author name and email?

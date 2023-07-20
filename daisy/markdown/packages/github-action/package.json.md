@@ -1,10 +1,10 @@
 {{prompt}}
 {{fileContents}}
 Summary:
-The provided configuration file is for a larger application called D.A.I.S.Y. (Document Automation and Intelligent System). It is a bot that helps in documenting code and allows users to save code into memory and chat with it using AnswerAI. The configuration file contains various settings and dependencies required for the application to run.
+The provided configuration file is for a larger application called D.A.I.S.Y. (Document Automation and Intelligent System). It is a bot that helps in documenting code by saving it into memory and allowing users to chat with it using AnswerAI. The configuration file contains various settings and dependencies required for the application to run.
 
 Service:
-D.A.I.S.Y. is a code documentation bot that automates the process of documenting code. It integrates with AnswerAI, a chatbot platform, to provide a conversational interface for interacting with the code documentation.
+D.A.I.S.Y. is a code documentation bot that automates the process of documenting code. It integrates with AnswerAI, a chatbot platform, to provide a conversational interface for interacting with the bot.
 
 Configuration Summary:
 The configuration file specifies the name, version, description, main file, and other metadata about the application. It also includes scripts for building, testing, and packaging the application. Additionally, it lists the dependencies and devDependencies required for the application to function properly.
@@ -13,7 +13,7 @@ Configuration Breakdown:
 - name: The name of the application.
 - version: The version number of the application.
 - description: A brief description of the application.
-- main: The entry point file for the application.
+- main: The entry point file of the application.
 - private: A flag indicating that the application is private.
 - scripts: Various scripts for building, testing, and packaging the application.
 - repository: Information about the Git repository where the application is hosted.
@@ -25,7 +25,7 @@ Configuration Breakdown:
 - dependencies: Dependencies required for the application to run.
 
 Interaction Summary:
-The configuration file provides essential information and settings for the D.A.I.S.Y. application. It specifies the entry point, dependencies, and scripts for building, testing, and packaging the application. It also includes metadata such as the name, version, description, and license.
+The configuration file provides essential information and settings for the D.A.I.S.Y. application. It specifies the entry point, dependencies, and scripts for building, testing, and packaging the application. It also includes metadata such as the name, version, and description.
 
 Developer Questions:
 1. How do I build the application?
