@@ -1,6 +1,6 @@
 {
   "name": "@answerai/daisy-github-action",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "D.A.I.S.Y. - Document Automation and Intelligent System. A helpful bot that documents your code for you. It allows you to save it into memory and chat with it using AnswerAI",
   "main": "lib/index.js",
   "private": true,
@@ -31,7 +31,7 @@
     "@actions/core": "^1.10.0",
     "@actions/exec": "^1.1.1",
     "@actions/github": "^5.1.1",
-    "@answerai/daisy-core": "^0.1.2",
+    "@answerai/daisy-core": "^0.1.3",
     "@octokit/core": "^5.0.0",
     "@octokit/plugin-throttling": "^7.0.0"
   }
