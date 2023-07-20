@@ -32,9 +32,9 @@ Developer Questions:
 2. How do I run the application in development mode?
 3. How do I package the application?
 4. How do I run the tests?
-5. How do I watch for changes and run tests automatically?
-6. How do I report bugs?
-7. How do I find the documentation for the application?
-8. How do I add or update dependencies?
-9. How do I add or update devDependencies?
-10. How do I contact the author of the application?
+5. How do I configure the application to use a different Git repository?
+6. How do I add or update dependencies?
+7. How do I report bugs?
+8. How do I change the application's license?
+9. How do I configure environment variables using dotenv?
+10. How do I configure TypeScript for the application?
