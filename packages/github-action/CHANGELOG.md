@@ -1,5 +1,11 @@
 # @answerai/daisy-github-action
 
+## 0.1.3
+
+### Patch Changes
+
+- a4c720c: Copying resources into github-action package from core after packaging
+
 ## 0.1.2
 
 ### Patch Changes
