@@ -3,6 +3,8 @@ import path from "path";
 import { PineconeClient } from "@pinecone-database/pinecone";
 import axios from "axios";
 
+// 16384 is the max token count of gpt-4 model, multiplied by roughly 4 characters per token
+// https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them
 export const MAX_FILE_SIZE = 16384 * 4;
 
 import {
@@ -80,8 +82,6 @@ export const getFileData = async (
       model = getCompletionModelBasedOnTokenSize(tokens) ?? "";
       cost = getEstimatedPricing(model, tokens) ?? "0";
     }
-
-    // console.log(`\x1b[32m\u2714\x1b[0m ${filePath}`);
 
     // TODO: Send to the embedding api for classification
     return {
