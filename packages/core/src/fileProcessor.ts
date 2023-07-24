@@ -117,7 +117,7 @@ export const fileProcessor = async (
     const files = isDirectory ? await readdir(currentPath) : [currentPath];
 
     for (const file of files) {
-      const filePath = path.join(currentPath, file);
+      const filePath = isDirectory ? path.join(iPath, file) : file;
       const fileStats = await stat(filePath);
 
       if (fileStats.isDirectory()) {

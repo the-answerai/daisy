@@ -9,7 +9,7 @@
     "dev": "tsc --watch",
     "package": "ncc build --source-map --license licenses.txt && pnpm copy:resources",
     "copy:resources": "cp -r ../core/resources resources/",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "test:watch": "jest --watch"
   },
   "repository": {
