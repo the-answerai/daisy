@@ -1,34 +1,33 @@
 Script Purpose and Role:
-The purpose of this script is to process files and directories within a specified code base. It is part of a broader software application that likely involves code analysis or documentation generation. This script is responsible for identifying valid files, determining their file type, and retrieving associated prompts and templates for each file.
+The purpose of this script is to process files and directories within a specified code base. It is part of a broader software application that likely involves code analysis or documentation generation. This script specifically handles file processing, including determining file types, checking file validity, and extracting relevant information for further processing.
 
 Script Structure:
-The script begins with import statements for various modules and functions. It then defines a configuration object that contains settings and paths for the script's operation. Next, there are several test blocks that verify the correct behavior of the script's functions. The script is divided into three main sections: the fileProcessor function, the getFileType function, and the isInvalidFile function. Each of these functions is described in detail below.
+The script begins with import statements, followed by the definition of a configuration object. It then defines a series of tests using the Jest testing framework. The tests cover various scenarios related to file processing, file type determination, and file validity classification.
 
 Import Statements:
-- `readdir`, `stat`, and `readFile` are imported from the "fs/promises" module. These functions are used for file system operations such as reading directories, retrieving file information, and reading file contents.
-- `resolve` and `join` are imported from the "path" module. These functions are used for resolving and joining file paths.
-- `fileProcessor`, `getFileType`, and `isInvalidFile` are imported from local modules. These functions are used for processing files and determining their file type and validity.
-- `getTemplateFiles` is imported from a local module. This function is used for retrieving template files.
+- `readdir`, `stat`, and `readFile` are imported from the `fs/promises` module. These functions are used for file system operations such as reading directories, retrieving file information, and reading file contents.
+- `resolve` and `join` are imported from the `path` module. These functions are used for resolving and joining file paths.
+- `FileValidity`, `MAX_FILE_SIZE`, `fileProcessor`, `getFileType`, and `getFileValidity` are imported from the `fileProcessor` module. These functions and constants are used for file processing and validity checks.
+- `getTemplateFiles` is imported from the `getTemplateFiles` module. This function is used to retrieve template files.
+- `DaisyConfig` is imported from the `types` module. This type is used to define the configuration object.
 
 Classes and Functions:
-- `fileProcessor(filePath: string, config: DaisyConfig): Promise<File[]>`: This function processes a single file or a directory. It takes a file path and a configuration object as parameters. It returns a promise that resolves to an array of File objects. The function first checks if the given path is a directory or a file using the `stat` function. If it is a file, it determines the file type using the `getFileType` function and retrieves the associated prompt and template from the configuration object. If it is a directory, it reads the directory using the `readdir` function and processes each file recursively. The function returns an array of File objects, each containing the file path, file type, prompt, template, and skipCompletion flag.
-- `getFileType(filePath: string, config: DaisyConfig): FileType`: This function determines the file type of a given file path. It takes a file path and a configuration object as parameters. It returns a FileType object that contains the file type, prompt, template, and skipCompletion flag. The function checks the file extension against the file types defined in the configuration object and returns the corresponding FileType object.
-- `isInvalidFile(filePath: string, config: DaisyConfig): boolean`: This function checks if a given file path is invalid based on the configuration object. It takes a file path and a configuration object as parameters. It returns a boolean value indicating whether the file is invalid. The function checks if the file path matches any of the invalid paths, invalid file types, or invalid file names defined in the configuration object.
+- `fileProcessor(filePath: string, config: DaisyConfig): Promise<File[]>`: This function processes a file or directory specified by the `filePath` parameter. It returns a promise that resolves to an array of `File` objects. The `config` parameter is used to determine the file type, prompt, template, and skip completion settings for each file.
+- `getFileType(filePath: string, config: DaisyConfig): FileType`: This function determines the file type of the file specified by the `filePath` parameter. It returns a `FileType` object containing the file type, prompt, template, and skip completion settings.
+- `getFileValidity(options: FileValidityOptions): FileValidity`: This function classifies the validity of a file based on the provided options. It returns a `FileValidity` enum value indicating the file's validity status.
 
 Loops and Conditional Statements:
-- The `fileProcessor` function uses a conditional statement to check if the given path is a directory or a file. If it is a file, it processes the file. If it is a directory, it reads the directory and processes each file recursively.
-- The `isInvalidFile` function uses conditional statements to check if the file path matches any of the invalid paths, invalid file types, or invalid file names defined in the configuration object.
+- The `fileProcessor` function contains conditional statements to handle different scenarios based on whether the specified path is a file or a directory.
+- The `getFileValidity` function contains conditional statements to check various conditions and classify the file's validity accordingly.
 
 Variable Usage:
-- The `config` variable is an object that stores various settings and paths for the script's operation. It is used as a parameter in several functions to provide configuration information.
-- The `dirPath` variable is used to store the directory path in the test block for the `fileProcessor` function.
-- The `filePath` variable is used to store the file path in the test blocks for the `fileProcessor` and `getFileType` functions.
-- The `result` variable is used to store the result of the `fileProcessor` function in the test blocks.
+- The `config` variable is an object of type `DaisyConfig` that stores various configuration settings used throughout the script.
+- The `result` variable is used to store the result of file processing operations.
+- Various variables are used within the tests to store file paths, file contents, and expected results.
 
 Potential Bugs or Issues:
-- The script uses the `jest.mock` function to mock certain modules and functions for testing purposes. This may cause issues if the script is used outside of a testing environment. To address this, the script should provide a fallback implementation for the mocked modules and functions when they are not available.
-- The script does not handle errors that may occur during file system operations or configuration parsing. It should include error handling and appropriate error messages to provide feedback to the user.
-- The script assumes that the configuration object is correctly defined and contains all the necessary properties. It should include validation checks for the configuration object to ensure that it is properly formatted and contains the required properties.
+- The script uses Jest's mocking functionality to mock certain functions and modules. While this is useful for testing, it may cause issues if the mocked behavior does not accurately reflect the actual behavior of the functions or modules being mocked. It is important to ensure that the mocks are set up correctly and updated if the behavior of the mocked functions or modules changes.
+- The script does not handle errors or exceptions that may occur during file processing. It would be beneficial to add error handling and appropriate error messages to provide better feedback to the user.
 
 Summary:
-This script is responsible for processing files and directories within a code base. It determines the file type of each file, retrieves associated prompts and templates, and identifies invalid files based on a configuration object. The script is structured into functions that handle different aspects of file processing. It uses import statements to import necessary modules and functions. The script includes test blocks to verify the correct behavior of its functions. There are potential bugs and issues related to testing dependencies, error handling, and configuration validation that need to be addressed.
+This script is responsible for processing files and directories within a code base. It determines file types, checks file validity, and extracts relevant information for further processing. It uses various functions and constants from the `fileProcessor` and `getTemplateFiles` modules, as well as file system operations from the `fs/promises` module. The script includes tests to ensure the correct behavior of the file processing functions. However, it may have potential issues with the mocking of functions and modules, as well as the lack of error handling.
