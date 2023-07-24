@@ -19,7 +19,7 @@ const templateCompiler = (content: string) => {
   return Handlebars.compile(content);
 };
 
-const fileReader = async (filePath: string) => {
+export const fileReader = async (filePath: string) => {
   return await readFile(filePath, "utf-8");
 };
 
@@ -30,20 +30,19 @@ export const countTokens = (content: string) => {
 };
 
 export type CompileCompletionPromptsProps = {
-  filePath: string;
   prompt?: string;
   skipCompletion: boolean;
   config: DaisyConfig;
+  fileContents: string;
 };
 
 export const compileCompletionPrompts = async ({
-  filePath,
   prompt,
   skipCompletion,
   config,
+  fileContents,
 }: CompileCompletionPromptsProps) => {
   try {
-    const fileContents = await fileReader(filePath);
     let fullPrompt: string | undefined;
     if (!skipCompletion) {
       const templateFiles = await getTemplateFiles(config.templateFilePath);

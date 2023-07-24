@@ -33,44 +33,39 @@ export const copyFolderSync = (src: string, dest: string): void => {
   }
 };
 
-export const initPromptsFolder = (
-  config: DaisyConfig,
-  folderPath: string
-): void => {
-  // Copy the prompts folder over if it doesn't exist
-  const localPromptsPath = path.join(
-    folderPath,
-    config.daisyDirectoryName,
-    "prompts"
-  );
-  const packagePromptsPath = path.join(__dirname, "../resources/prompts");
-
-  if (!fs.existsSync(localPromptsPath)) {
-    copyFolderSync(packagePromptsPath, localPromptsPath);
+export const initFolder = (targetPath: string, sourcePath: string): void => {
+  if (!fs.existsSync(targetPath)) {
+    fs.mkdirSync(targetPath, { recursive: true });
+  }
+  // copy each file if it does not exist
+  const entries = fs.readdirSync(sourcePath, { withFileTypes: true });
+  for (const entry of entries) {
+    // copy the file if it doesn't exist
+    const srcPath = path.join(sourcePath, entry.name);
+    const destPath = path.join(targetPath, entry.name);
+    if (!fs.existsSync(destPath)) {
+      fs.copyFileSync(srcPath, destPath);
+    }
   }
 };
 
-export const initTemplatesFolder = (
-  config: DaisyConfig,
-  folderPath: string
-): void => {
-  // Copy the templates folder over if it doesn't exist
-  const localTemplatesPath = path.join(
-    folderPath,
-    config.daisyDirectoryName,
-    "templates"
+export const initPromptsFolder = (config: DaisyConfig): void =>
+  initFolder(
+    config.promptsFilePath,
+    path.join(__dirname, "../resources/prompts")
   );
-  const packageTemplatesPath = path.join(__dirname, "../resources/templates");
 
-  if (!fs.existsSync(localTemplatesPath)) {
-    copyFolderSync(packageTemplatesPath, localTemplatesPath);
-  }
-};
+export const initTemplatesFolder = (config: DaisyConfig): void =>
+  initFolder(
+    config.templateFilePath,
+    path.join(__dirname, "../resources/templates")
+  );
 
 export const init = async (codeBasePath: string): Promise<DaisyConfig> => {
   const config = await initConfigFile(codeBasePath);
-  initPromptsFolder(config, codeBasePath);
-  initTemplatesFolder(config, codeBasePath);
+
+  initPromptsFolder(config);
+  initTemplatesFolder(config);
 
   return config;
 };
