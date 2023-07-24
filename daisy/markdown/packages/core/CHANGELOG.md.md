@@ -1,5 +1,11 @@
 # @answerai/daisy-core
 
+## 0.1.4
+
+### Patch Changes
+
+- cde516d: added a file size limit to daisy and fixed prompt/template copying on initialization
+
 ## 0.1.3
 
 ### Patch Changes

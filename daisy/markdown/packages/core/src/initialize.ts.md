@@ -1,51 +1,45 @@
 Summary:
-This code file is responsible for initializing the configuration file, prompts folder, and templates folder for a software application. It provides functions to copy files and folders, check if a file or folder exists, and create directories if needed. The code is written in TypeScript and uses the fs and path modules from Node.js.
+This code file is responsible for initializing the configuration file and folders for a software application called Daisy. It provides functions to copy files and folders, create necessary folders if they don't exist, and initialize the configuration file. The code interacts with the file system module to perform file operations.
 
 Import statements:
-- fs: This module provides functions for interacting with the file system.
-- path: This module provides utilities for working with file and directory paths.
-- DaisyConfig: This is a custom type that represents the configuration for the Daisy application.
+- `fs` is imported from the "fs" module, which provides functions for interacting with the file system.
+- `path` is imported from the "path" module, which provides utilities for working with file and directory paths.
+- `DaisyConfig` is imported from the "./types" module, which defines the type for the Daisy configuration.
 
 Script Summary:
-The script consists of several functions that handle the initialization of the configuration file, prompts folder, and templates folder. It also includes a main function called "init" that orchestrates the initialization process.
+The script exports several functions that are used to initialize the configuration file and folders for the Daisy application. It also provides helper functions for copying files and folders recursively.
 
 Internal Functions:
-1. initConfigFile: This function copies the default configuration file to the specified code base path if it doesn't already exist. It then loads the configuration from the file and returns it as a DaisyConfig object.
+1. `copyFolderSync(src: string, dest: string): void`: This function copies a folder recursively from the source path to the destination path. It checks if the destination folder exists and creates it if it doesn't. It uses the `fs` module to perform file operations.
 
-2. copyFolderSync: This function recursively copies a folder from the source path to the destination path. It creates the destination directory if it doesn't exist and copies files using fs.copyFileSync.
-
-3. initPromptsFolder: This function copies the prompts folder from the package resources to the specified folder path if it doesn't already exist. It uses the copyFolderSync function to perform the copying.
-
-4. initTemplatesFolder: This function copies the templates folder from the package resources to the specified folder path if it doesn't already exist. It uses the copyFolderSync function to perform the copying.
-
-5. init: This is the main function that initializes the configuration file, prompts folder, and templates folder. It calls initConfigFile to get the configuration, and then calls initPromptsFolder and initTemplatesFolder to copy the necessary folders. Finally, it returns the configuration.
+2. `initFolder(targetPath: string, sourcePath: string): void`: This function initializes a folder by copying each file from the source path to the target path if it doesn't already exist. It creates the target folder if it doesn't exist. It uses the `fs` module to perform file operations.
 
 External Functions:
-- initConfigFile(codeBasePath: string): Promise<DaisyConfig>: Copies the default config file to the code base path if it doesn't exist, loads the configuration from the file, and returns it as a Promise.
+1. `initConfigFile(codeBasePath: string): Promise<DaisyConfig>`: This function initializes the configuration file for the Daisy application. It checks if the local configuration file exists and copies the default configuration file if it doesn't. It then requires the local configuration file and calls the exported function from the file with the `codeBasePath` argument. It returns the configuration object.
 
-- copyFolderSync(src: string, dest: string): void: Recursively copies a folder from the source path to the destination path synchronously.
+2. `initPromptsFolder(config: DaisyConfig): void`: This function initializes the prompts folder by calling the `initFolder` function with the prompts file path from the configuration and the path to the prompts folder in the resources directory.
 
-- initPromptsFolder(config: DaisyConfig, folderPath: string): void: Copies the prompts folder to the specified folder path if it doesn't exist, using the configuration object.
+3. `initTemplatesFolder(config: DaisyConfig): void`: This function initializes the templates folder by calling the `initFolder` function with the templates file path from the configuration and the path to the templates folder in the resources directory.
 
-- initTemplatesFolder(config: DaisyConfig, folderPath: string): void: Copies the templates folder to the specified folder path if it doesn't exist, using the configuration object.
-
-- init(codeBasePath: string): Promise<DaisyConfig>: Initializes the configuration file, prompts folder, and templates folder. It returns the configuration as a Promise.
+4. `init(codeBasePath: string): Promise<DaisyConfig>`: This function initializes the configuration file and folders for the Daisy application. It calls the `initConfigFile` function to get the configuration object, then calls the `initPromptsFolder` and `initTemplatesFolder` functions to initialize the prompts and templates folders. It returns the configuration object.
 
 Interaction Summary:
-This script can be used as part of a larger software application to set up the initial configuration and required folders. It can be called at the start of the application or during an installation process to ensure that the necessary files and folders are present.
+This code file interacts with the file system module to perform file operations such as copying files and creating folders. It also interacts with the configuration file and other resources in the application.
 
 Developer Questions:
 1. How can I modify the default configuration file?
-To modify the default configuration file, you can edit the file located at "../resources/daisyrc". This file contains the default configuration settings for the application.
+   - You can modify the default configuration file by editing the file located at "../resources/daisyrc".
 
-2. How can I add or modify prompts for the application?
-To add or modify prompts for the application, you can add or modify files in the "prompts" folder located in the code base path. These files should follow the required format and structure defined by the application.
+2. How can I add new prompts or templates to the application?
+   - You can add new prompts by adding files to the "../resources/prompts" folder.
+   - You can add new templates by adding files to the "../resources/templates" folder.
 
-3. How can I add or modify templates for the application?
-To add or modify templates for the application, you can add or modify files in the "templates" folder located in the code base path. These files should follow the required format and structure defined by the application.
+3. How can I change the location of the configuration file or resource folders?
+   - You can modify the paths in the `initPromptsFolder` and `initTemplatesFolder` functions to change the location of the prompts and templates folders.
+   - You can modify the paths in the `defaultConfigPath` and `localConfigPath` variables in the `initConfigFile` function to change the location of the configuration file.
 
 Known Issues or Bugs:
-- None identified.
+- None
 
 Todo Items:
-- None identified.
+- None
