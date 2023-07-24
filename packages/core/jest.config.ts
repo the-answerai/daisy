@@ -4,5 +4,6 @@ const config = {
   transform: {
     "^.+\\.tsx?$": "ts-jest",
   },
+  testPathIgnorePatterns: ["/node_modules/", "/dist/"],
 };
 export default config;

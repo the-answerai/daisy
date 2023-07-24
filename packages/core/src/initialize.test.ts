@@ -39,7 +39,7 @@ describe("D.A.I.S.Y. initialization", () => {
 
   test("initPromptsFolder creates the prompt folder with default prompts", async () => {
     const config = await initConfigFile(testFolder);
-    initPromptsFolder(config, testFolder);
+    initPromptsFolder(config);
     const promptsPath = path.join(
       testFolder,
       config.daisyDirectoryName,
@@ -50,7 +50,7 @@ describe("D.A.I.S.Y. initialization", () => {
 
   test("initTemplatesFolder creates the templates folder with default templates", async () => {
     const config = await initConfigFile(testFolder);
-    initTemplatesFolder(config, testFolder);
+    initTemplatesFolder(config);
     const templatesPath = path.join(
       testFolder,
       config.daisyDirectoryName,

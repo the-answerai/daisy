@@ -3,11 +3,16 @@ import path from "path";
 import { PineconeClient } from "@pinecone-database/pinecone";
 import axios from "axios";
 
+// 16384 is the max token count of gpt-4 model, multiplied by roughly 4 characters per token
+// https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them
+export const MAX_FILE_SIZE = 16384 * 4;
+
 import {
   countTokens,
   compileCompletionPrompts,
   getCompletionModelBasedOnTokenSize,
   getEstimatedPricing,
+  fileReader,
 } from "./utils";
 
 import { createChatCompletion, createOpenAiEmbedding } from "./ai";
@@ -28,7 +33,29 @@ import {
   getFileDiff,
   verifyValidRepo,
 } from "./gitCommands";
-import { get } from "http";
+
+const getValidityMessage = (fileValidity: FileValidity, filePath: string) => {
+  let message = "";
+
+  switch (fileValidity) {
+    case FileValidity.InvalidPath:
+      message = `Skipping file (invalid path): ${filePath}`;
+      break;
+    case FileValidity.InvalidFileType:
+      message = `Skipping file (invalid file type): ${filePath}`;
+      break;
+    case FileValidity.InvalidFileName:
+      message = `Skipping file (invalid file name): ${filePath}`;
+      break;
+    case FileValidity.TooLarge:
+      message = `Skipping file (Exceeds ${MAX_FILE_SIZE} chars): ${filePath}`;
+      break;
+  }
+
+  if (message) {
+    return `\x1b[31m\u2718\x1b[0m ${message}`;
+  }
+};
 
 const client = new PineconeClient();
 
@@ -36,13 +63,15 @@ export const getFileData = async (
   filePath: string,
   config: DaisyConfig
 ): Promise<FileData | null> => {
-  if (!isInvalidFile(filePath, config)) {
+  const fileContents = await fileReader(filePath);
+  const fileValidity = getFileValidity({ filePath, fileContents, config });
+  if (fileValidity === FileValidity.Valid) {
     const fileTypeObj = getFileType(filePath, config);
     let tokens = 0;
     let model = "";
     let cost = "0";
     const completionObj = await compileCompletionPrompts({
-      filePath,
+      fileContents,
       prompt: fileTypeObj.prompt,
       skipCompletion: fileTypeObj.skipCompletion,
       config,
@@ -68,7 +97,8 @@ export const getFileData = async (
       cost,
     };
   } else {
-    console.log(`Skipping file: ${filePath}`);
+    console.log(getValidityMessage(fileValidity, filePath));
+
     return null;
   }
 };
@@ -77,38 +107,58 @@ export const fileProcessor = async (
   iPath: string,
   config: DaisyConfig
 ): Promise<FileData[]> => {
+  const stack: string[] = [];
+  stack.push(iPath);
   const filesData: FileData[] = [];
-  const isDirectory = (await stat(iPath)).isDirectory();
-  const files = await (isDirectory ? readdir(iPath) : [iPath]);
 
-  for (const file of files) {
-    const filePath = isDirectory ? path.join(iPath, file) : file;
-    const fileStats = await stat(filePath);
+  while (stack.length > 0) {
+    const currentPath = stack.pop() as string;
+    const isDirectory = (await stat(currentPath)).isDirectory();
+    const files = isDirectory ? await readdir(currentPath) : [currentPath];
 
-    if (fileStats.isDirectory()) {
-      if (
-        !config.invalidPaths.some((invalidPath) =>
-          filePath.includes(invalidPath)
-        )
-      ) {
-        filesData.push(...(await fileProcessor(filePath, config)));
-      }
-    } else {
-      const fileData = await getFileData(filePath, config);
-      if (fileData) {
-        // TODO: Send to the embedding api for classification
-        filesData.push(fileData);
+    for (const file of files) {
+      const filePath = isDirectory ? path.join(iPath, file) : file;
+      const fileStats = await stat(filePath);
+
+      if (fileStats.isDirectory()) {
+        if (
+          !config.invalidPaths.some((invalidPath) =>
+            filePath.includes(invalidPath)
+          )
+        ) {
+          stack.push(filePath);
+        }
+      } else {
+        const fileData = await getFileData(filePath, config);
+        if (fileData) {
+          // TODO: Send to the embedding api for classification
+          filesData.push(fileData);
+        }
       }
     }
   }
-
   return filesData;
 };
 
-export const isInvalidFile = (
-  filePath: string,
-  config: DaisyConfig
-): boolean => {
+export enum FileValidity {
+  Valid,
+  InvalidPath,
+  InvalidFileType,
+  InvalidFileName,
+  TooLarge,
+}
+
+export type GetFileValidityProps = {
+  filePath: string;
+  fileContents: string;
+  config: DaisyConfig;
+};
+
+export const getFileValidity = ({
+  filePath,
+  fileContents,
+  config,
+}: GetFileValidityProps): FileValidity => {
   const ext = path.extname(filePath);
   const fileParentDir = path.dirname(filePath);
   const cond1 = config.invalidPaths.some((invalidPath) =>
@@ -118,12 +168,17 @@ export const isInvalidFile = (
   const cond2 = config.invalidFileTypes.includes(ext);
   const cond3 = config.invalidFileNames.includes(path.basename(filePath));
 
-  if (cond1 || cond2 || cond3) {
-    console.log(`Skipping file: ${filePath}`, cond1, cond2, cond3);
-    return true;
-  }
+  const cond4 = fileContents.length > MAX_FILE_SIZE;
 
-  return false;
+  return cond1
+    ? FileValidity.InvalidPath
+    : cond2
+    ? FileValidity.InvalidFileType
+    : cond3
+    ? FileValidity.InvalidFileName
+    : cond4
+    ? FileValidity.TooLarge
+    : FileValidity.Valid;
 };
 
 export const getFileContents = async (
@@ -499,7 +554,13 @@ export async function getChangedFilesWithStatus({
 
   for (const file of result) {
     const fullFilePath = path.join(config.codeBasePath, file.filePath);
-    if (!isInvalidFile(fullFilePath, config)) {
+    const fileContents = await fileReader(fullFilePath);
+    const fileValidity = getFileValidity({
+      filePath: fullFilePath,
+      config,
+      fileContents,
+    });
+    if (fileValidity === FileValidity.Valid) {
       const { filePath, status, gitDiff } = file;
 
       const fileArray = fileArrays[status];
@@ -511,6 +572,8 @@ export async function getChangedFilesWithStatus({
           status,
         });
       }
+    } else {
+      console.log(getValidityMessage(fileValidity, fullFilePath));
     }
   }
 

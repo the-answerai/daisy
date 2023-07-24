@@ -1,6 +1,12 @@
 import { readdir, stat, readFile } from "fs/promises";
 import { resolve, join } from "path";
-import { fileProcessor, getFileType, isInvalidFile } from "./fileProcessor";
+import {
+  FileValidity,
+  MAX_FILE_SIZE,
+  fileProcessor,
+  getFileType,
+  getFileValidity,
+} from "./fileProcessor";
 import { getTemplateFiles } from "./getTemplateFiles";
 import { DaisyConfig } from "./types";
 
@@ -101,16 +107,53 @@ describe("getFileType", () => {
   });
 });
 
-describe("isInvalidFile", () => {
-  test("identifies invalid files correctly", () => {
+describe("getFileValidity", () => {
+  test("classifies file validity correctly", () => {
     const invalidFile1 = "/test/codeBase/invalidDir/invalidFile.js";
     const invalidFile2 = "/test/codeBase/someDir/invalidName.js";
     const invalidFile3 = "/test/codeBase/someDir/invalidFile.txt";
     const validFile = "/test/codeBase/someDir/validFile.js";
+    const validContents = "valid file contents";
 
-    expect(isInvalidFile(invalidFile1, config)).toBe(true);
-    expect(isInvalidFile(invalidFile2, config)).toBe(true);
-    expect(isInvalidFile(invalidFile3, config)).toBe(true);
-    expect(isInvalidFile(validFile, config)).toBe(false);
+    let invalidContents = "";
+    for (let i = 0; i < MAX_FILE_SIZE + 1; i++) {
+      invalidContents += "a";
+    }
+
+    expect(
+      getFileValidity({
+        filePath: invalidFile1,
+        config,
+        fileContents: validContents,
+      })
+    ).toBe(FileValidity.InvalidPath);
+    expect(
+      getFileValidity({
+        filePath: invalidFile2,
+        config,
+        fileContents: validContents,
+      })
+    ).toBe(FileValidity.InvalidFileName);
+    expect(
+      getFileValidity({
+        filePath: invalidFile3,
+        config,
+        fileContents: validContents,
+      })
+    ).toBe(FileValidity.InvalidFileType);
+    expect(
+      getFileValidity({
+        filePath: validFile,
+        config,
+        fileContents: validContents,
+      })
+    ).toBe(FileValidity.Valid);
+    expect(
+      getFileValidity({
+        filePath: validFile,
+        config,
+        fileContents: invalidContents,
+      })
+    ).toBe(FileValidity.TooLarge);
   });
 });
