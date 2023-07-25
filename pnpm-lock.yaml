@@ -24,7 +24,7 @@ importers:
   packages/cli:
     dependencies:
       '@answerai/daisy-core':
-        specifier: workspace:*
+        specifier: ^0.1.4
         version: link:../core
       commander:
         specifier: ^11.0.0
