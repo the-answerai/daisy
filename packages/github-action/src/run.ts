@@ -112,7 +112,6 @@ type RunCompletionsProps = {
   config: DaisyConfig;
   files: FileData[];
   githubToken: string;
-  prTitle?: string;
   commitMessage?: string;
   prBodyMaxCharacters?: number;
 };
@@ -125,7 +124,6 @@ export async function runCompletionsAndCreatePr({
   config,
   files,
   githubToken,
-  prTitle = "D.A.I.S.Y updates",
   prBodyMaxCharacters = MAX_CHARACTERS_PER_MESSAGE,
 }: RunCompletionsProps): Promise<RunCompletionResult> {
   const octokit = setupOctokit(githubToken);
@@ -170,6 +168,8 @@ export async function runCompletionsAndCreatePr({
     branch,
     prBodyMaxCharacters,
   });
+
+  const prTitle = getDaisyCommitPrefixWithBranch(branch);
 
   if (searchResult.data.items.length === 0) {
     core.info("creating pull request");

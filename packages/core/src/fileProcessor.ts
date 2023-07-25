@@ -89,7 +89,8 @@ export const getFileData = async (
       type: fileTypeObj.type,
       prompt: fileTypeObj.prompt,
       template: fileTypeObj.template,
-      skipCompletion: fileTypeObj.skipCompletion,
+      // if no model exists, we need to skip completion for it, since it is too large
+      skipCompletion: model ? fileTypeObj.skipCompletion : true,
       fullPrompt: completionObj?.fullPrompt || "",
       fileContents: completionObj?.fileContents,
       tokens,

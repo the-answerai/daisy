@@ -1,54 +1,693 @@
-Script Purpose and Role:
-The purpose of this script is to process code files and generate documentation based on their contents. It is part of a broader software application that aims to automate the documentation process for codebases. This script specifically handles the processing of code files, extracting relevant information, and generating documentation in Markdown format.
+import { stat, readdir, readFile, mkdir, writeFile } from "fs/promises";
+import path from "path";
+import { PineconeClient } from "@pinecone-database/pinecone";
+import axios from "axios";
 
-Script Structure:
-The script starts with import statements, followed by the definition of constants and types. Then, it defines several utility functions and main functions for processing files and generating documentation. Finally, there are functions for interacting with external APIs and a batch processing function.
+// 16384 is the max token count of gpt-4 model, multiplied by roughly 4 characters per token
+// https://help.openai.com/en/articles/4936856-what-are-tokens-and-how-to-count-them
+export const MAX_FILE_SIZE = 16384 * 4;
 
-Import Statements:
-- `fs/promises`: This module provides asynchronous versions of file system operations such as reading and writing files.
-- `path`: This module provides utilities for working with file and directory paths.
-- `@pinecone-database/pinecone`: This module provides a client for interacting with the Pinecone database.
-- `axios`: This module provides an HTTP client for making API requests.
-- `./utils`: This is a local module that contains utility functions for processing files.
-- `./ai`: This is a local module that contains functions for interacting with AI models.
-- `./types`: This is a local module that defines custom types used in the script.
-- `openai`: This module provides a client for interacting with the OpenAI API.
-- `./gitCommands`: This is a local module that contains functions for executing Git commands.
+import {
+  countTokens,
+  compileCompletionPrompts,
+  getCompletionModelBasedOnTokenSize,
+  getEstimatedPricing,
+  fileReader,
+} from "./utils";
 
-Classes and Functions:
-- `getValidityMessage`: This function takes a `FileValidity` enum value and a file path as input and returns a message indicating the validity of the file.
-- `getFileData`: This async function takes a file path and a configuration object as input and returns a `FileData` object or null. It reads the file contents, checks the validity of the file, and compiles completion prompts if necessary.
-- `fileProcessor`: This async function takes an initial path and a configuration object as input and returns an array of `FileData` objects. It recursively processes files in the directory and its subdirectories.
-- `getFileValidity`: This function takes a file path, file contents, and a configuration object as input and returns a `FileValidity` enum value indicating the validity of the file.
-- `getFileType`: This function takes a file path and a configuration object as input and returns a `FileTypeObject` containing the type, prompt, template, and skipCompletion properties.
-- `batchCompletionProcessor`: This async function takes an array of `FileData` objects and a configuration object as input and generates responses for each file using AI models. It then writes the responses to Markdown files.
-- `getFilePathWithReplacedBase`: This function takes a `FileData` object and a configuration object as input and returns the file path with the base path replaced by the Markdown directory path.
-- `prepareData`: This async function takes a `FileData` object, a package.json object, a configuration object, and a branch name as input and prepares the data for generating and upserting embeddings.
-- `generateAndUpsertEmbedding`: This async function takes a configuration object, a repo name, content, code content, and a file path as input and generates and upserts embeddings using the Pinecone database.
-- `batchPineconeEmbeddingsProcessor`: This async function takes an array of `FileData` objects, a package.json object, a configuration object, and a branch name as input and processes the files in batches, generating and upserting embeddings using the Pinecone database.
-- `writeResponsesToFile`: This async function takes an array of `FileData` objects, an array of responses, and a configuration object as input and writes the responses to Markdown files.
-- `writePreviewMarkdownToFile`: This async function takes an array of `FileData` objects and a configuration object as input and writes the preview prompts to Markdown files.
-- `generateResponses`: This async function takes an array of `FileData` objects and a configuration object as input and generates responses for each file using AI models.
-- `splitFiles`: This function takes an array of `FileData` objects as input and splits them into two arrays based on the skipCompletion property.
-- `getChangedFilesWithStatus`: This async function takes a code path, a configuration object, a last commit hash, and a current working directory as input and returns an object containing arrays of added, modified, and deleted files.
-- `callAnswerAiEmbeddingApi`: This async function takes a configuration object, a repo name, content, code content, and a file path as input and calls the AnswerAI embedding API to generate embeddings.
-- `batchAnswerAiEmbeddingsProcessor`: This async function takes an array of `FileData` objects, a package.json object, a configuration object, and a branch name as input and processes the files in batches, generating embeddings using the AnswerAI API.
-- `batchEmbeddingsProcessor`: This async function takes an array of `FileData` objects, a configuration object, and a current working directory as input and processes the files in batches, generating embeddings using either the Pinecone database or the AnswerAI API.
+import { createChatCompletion, createOpenAiEmbedding } from "./ai";
+import {
+  ChangedFiles,
+  DaisyConfig,
+  FileContents,
+  FileData,
+  FileGitInfo,
+  FileTypeObject,
+  PackageJson,
+} from "./types";
+import { VectorOperationsApi } from "@pinecone-database/pinecone/dist/pinecone-generated-ts-fetch";
+import { Configuration, OpenAIApi } from "openai";
+import {
+  getChangedFiles,
+  getCurrentBranch,
+  getFileDiff,
+  verifyValidRepo,
+} from "./gitCommands";
 
-Loops and Conditional Statements:
-- The script uses a while loop in the `fileProcessor` function to recursively process files in a directory and its subdirectories.
-- The script uses for loops to iterate over files and batches of files in various functions.
-- The script uses if-else statements to check the validity of files and handle different cases.
+const getValidityMessage = (fileValidity: FileValidity, filePath: string) => {
+  let message = "";
 
-Variable Usage:
-- The script uses variables to store file paths, file contents, file types, tokens count, models, costs, and other relevant information.
-- Variables are used to pass data between functions and to control the flow of execution.
+  switch (fileValidity) {
+    case FileValidity.InvalidPath:
+      message = `Skipping file (invalid path): ${filePath}`;
+      break;
+    case FileValidity.InvalidFileType:
+      message = `Skipping file (invalid file type): ${filePath}`;
+      break;
+    case FileValidity.InvalidFileName:
+      message = `Skipping file (invalid file name): ${filePath}`;
+      break;
+    case FileValidity.TooLarge:
+      message = `Skipping file (Exceeds ${MAX_FILE_SIZE} chars): ${filePath}`;
+      break;
+  }
 
-Potential Bugs or Issues:
-- The script does not handle errors or exceptions in some cases, such as when reading files or making API requests. Proper error handling should be implemented to handle these cases.
-- The script assumes the availability of certain configuration values, such as API keys and file paths. It should include proper checks and error messages if these values are missing or invalid.
-- The script does not handle all possible file types or file name patterns. It may need to be extended to support additional file types or patterns.
-- The script does not handle all possible scenarios for generating embeddings or writing documentation. It may need to be modified or extended to handle specific requirements or edge cases.
+  if (message) {
+    return `\x1b[31m\u2718\x1b[0m ${message}`;
+  }
+};
 
-Summary:
-This script is responsible for processing code files, extracting relevant information, and generating documentation in Markdown format. It uses various utility functions and external APIs to accomplish these tasks. The script has a modular structure and can be extended or modified to support different codebases and documentation requirements. However, it may have some potential bugs or issues that need to be addressed, such as error handling and support for additional file types.
+const client = new PineconeClient();
+
+export const getFileData = async (
+  filePath: string,
+  config: DaisyConfig
+): Promise<FileData | null> => {
+  const fileContents = await fileReader(filePath);
+  const fileValidity = getFileValidity({ filePath, fileContents, config });
+  if (fileValidity === FileValidity.Valid) {
+    const fileTypeObj = getFileType(filePath, config);
+    let tokens = 0;
+    let model = "";
+    let cost = "0";
+    const completionObj = await compileCompletionPrompts({
+      fileContents,
+      prompt: fileTypeObj.prompt,
+      skipCompletion: fileTypeObj.skipCompletion,
+      config,
+    });
+
+    if (!fileTypeObj.skipCompletion) {
+      tokens = countTokens(completionObj?.fullPrompt ?? "");
+      model = getCompletionModelBasedOnTokenSize(tokens) ?? "";
+      cost = getEstimatedPricing(model, tokens) ?? "0";
+    }
+
+    // TODO: Send to the embedding api for classification
+    return {
+      filePath,
+      type: fileTypeObj.type,
+      prompt: fileTypeObj.prompt,
+      template: fileTypeObj.template,
+      // if no model exists, we need to skip completion for it, since it is too large
+      skipCompletion: model ? fileTypeObj.skipCompletion : true,
+      fullPrompt: completionObj?.fullPrompt || "",
+      fileContents: completionObj?.fileContents,
+      tokens,
+      model,
+      cost,
+    };
+  } else {
+    console.log(getValidityMessage(fileValidity, filePath));
+
+    return null;
+  }
+};
+
+export const fileProcessor = async (
+  iPath: string,
+  config: DaisyConfig
+): Promise<FileData[]> => {
+  const stack: string[] = [];
+  stack.push(iPath);
+  const filesData: FileData[] = [];
+
+  while (stack.length > 0) {
+    const currentPath = stack.pop() as string;
+    const isDirectory = (await stat(currentPath)).isDirectory();
+    const files = isDirectory ? await readdir(currentPath) : [currentPath];
+
+    for (const file of files) {
+      const filePath = isDirectory ? path.join(currentPath, file) : file;
+      const fileStats = await stat(filePath);
+
+      if (fileStats.isDirectory()) {
+        if (
+          !config.invalidPaths.some((invalidPath) =>
+            filePath.includes(invalidPath)
+          )
+        ) {
+          stack.push(filePath);
+        }
+      } else {
+        const fileData = await getFileData(filePath, config);
+        if (fileData) {
+          // TODO: Send to the embedding api for classification
+          filesData.push(fileData);
+        }
+      }
+    }
+  }
+  return filesData;
+};
+
+export enum FileValidity {
+  Valid,
+  InvalidPath,
+  InvalidFileType,
+  InvalidFileName,
+  TooLarge,
+}
+
+export type GetFileValidityProps = {
+  filePath: string;
+  fileContents: string;
+  config: DaisyConfig;
+};
+
+export const getFileValidity = ({
+  filePath,
+  fileContents,
+  config,
+}: GetFileValidityProps): FileValidity => {
+  const ext = path.extname(filePath);
+  const fileParentDir = path.dirname(filePath);
+  const cond1 = config.invalidPaths.some((invalidPath) =>
+    fileParentDir.includes(invalidPath)
+  );
+
+  const cond2 = config.invalidFileTypes.includes(ext);
+  const cond3 = config.invalidFileNames.includes(path.basename(filePath));
+
+  const cond4 = fileContents.length > MAX_FILE_SIZE;
+
+  return cond1
+    ? FileValidity.InvalidPath
+    : cond2
+    ? FileValidity.InvalidFileType
+    : cond3
+    ? FileValidity.InvalidFileName
+    : cond4
+    ? FileValidity.TooLarge
+    : FileValidity.Valid;
+};
+
+export const getFileContents = async (
+  filePath: string
+): Promise<FileContents | null> => {
+  try {
+    const contents = await readFile(`${filePath}.md`, "utf-8");
+    return {
+      contents,
+      filePath,
+    };
+  } catch (error) {
+    console.error(`Error reading file: ${filePath}`, error);
+    return null;
+  }
+};
+
+export const getFileType = (
+  filePath: string,
+  config: DaisyConfig
+): FileTypeObject => {
+  for (const [type, fileType] of Object.entries(config.fileTypes)) {
+    const ext = path.extname(filePath);
+
+    if (fileType.fileTypes && fileType.fileTypes.includes(ext)) {
+      return {
+        type,
+        prompt: fileType.prompt,
+        template: fileType.template,
+        skipCompletion: !!fileType.skipCompletion,
+      };
+    }
+
+    if (
+      fileType.pathIncludes &&
+      fileType.pathIncludes.some((pathPart) => filePath.includes(pathPart))
+    ) {
+      return {
+        type,
+        prompt: fileType.prompt,
+        template: fileType.template,
+        skipCompletion: !!fileType.skipCompletion,
+      };
+    }
+  }
+
+  return {
+    type: "default",
+    prompt: config.fileTypes.default.prompt,
+    template: config.fileTypes.default.template,
+    skipCompletion: !!config.fileTypes.default.skipCompletion,
+  };
+};
+
+export type batchCompletionProcessorProps = {
+  files: FileData[];
+  config: DaisyConfig;
+};
+
+export const batchCompletionProcessor = async ({
+  files,
+  config,
+}: batchCompletionProcessorProps) => {
+  const batchSize = 5;
+  for (let i = 0; i < files.length; i += batchSize) {
+    const batch = files.slice(i, i + batchSize);
+    const responses = await generateResponses(batch, config);
+    await writeResponsesToFile(batch, responses, config);
+  }
+};
+
+export const getFilePathWithReplacedBase = (
+  file: FileData,
+  config: DaisyConfig
+) => {
+  const relativePath = file?.filePath?.replace(config.codeBasePath, "");
+  return path.join(config.markdownDirectory, relativePath);
+};
+
+export type PrepareDataProps = {
+  file: FileData;
+  packageJson: PackageJson;
+  config: DaisyConfig;
+  branch: string;
+};
+
+export const prepareData = async ({
+  file,
+  packageJson,
+  config,
+  branch,
+}: PrepareDataProps) => {
+  const fileWithReplaceBase = getFilePathWithReplacedBase(file, config);
+  const fileContents = await getFileContents(fileWithReplaceBase);
+  if (!fileContents) {
+    return null;
+  }
+  const filePath = fileContents.filePath;
+  const content = fileContents.contents;
+  const relativeFilePath = path
+    .relative(config.markdownDirectory, filePath)
+    .replace(".md.md", ".md");
+
+  const fullCodePath = path.join(config.codeBasePath, relativeFilePath);
+
+  const codeContent = await readFile(fullCodePath, "utf-8");
+  const repo = `${packageJson.name}-v${packageJson.version}-${branch}`;
+
+  return {
+    repo,
+    content,
+    codeContent,
+    filePath: relativeFilePath,
+    fullCodePath,
+    packageJson,
+  };
+};
+
+export type GenerateAndUpsertEmbeddingsProps = {
+  config: DaisyConfig;
+  repo: string;
+  index: VectorOperationsApi;
+  content: string;
+  codeContent: string;
+  filePath: string;
+};
+
+export const generateAndUpsertEmbedding = async ({
+  config,
+  repo,
+  index,
+  content,
+  codeContent,
+  filePath,
+}: GenerateAndUpsertEmbeddingsProps) => {
+  try {
+    if (!config.openAiApiKey) {
+      console.error("No OpenAI API Key provided");
+      return;
+    }
+    const configuration = new Configuration({
+      apiKey: config.openAiApiKey,
+    });
+
+    const openAi = new OpenAIApi(configuration);
+
+    const response = await createOpenAiEmbedding({
+      model: "text-embedding-ada-002",
+      input: content,
+      openAi,
+    });
+
+    const vectorId = `daisy_${repo}_${filePath.replace(/\//g, "_")}`;
+
+    await index
+      .upsert({
+        upsertRequest: {
+          namespace: config.pineconeNamespace,
+          vectors: [
+            {
+              id: vectorId,
+              values: response.data.data[0].embedding,
+              metadata: {
+                text: content,
+                tokens: response?.data?.usage?.total_tokens,
+                filePath,
+                source: `codebase`,
+                repo,
+                code: codeContent,
+              },
+            },
+          ],
+        },
+      })
+      .catch((error) => {
+        console.error("Error upserting embeddings to Pinecone:", error);
+        console.error("Error Response:", error?.response?.data);
+      });
+
+    console.log(
+      `Upserted vector: ${vectorId} with source: 'daisy', repo: '${repo}'`
+    );
+  } catch (error) {
+    console.error("Error calling openai.createEmbedding:", error);
+  }
+};
+
+export type BatchPineconeEmbeddingsProcessorProps = {
+  files: FileData[];
+  packageJson: PackageJson;
+  config: DaisyConfig;
+  branch: string;
+};
+
+export const batchPineconeEmbeddingsProcessor = async ({
+  files,
+  packageJson,
+  config,
+  branch,
+}: BatchPineconeEmbeddingsProcessorProps) => {
+  if (!config.openAiApiKey) {
+    console.error("No AnswerAI API key found in config");
+    return;
+  }
+  if (!config.pineconeApiKey) {
+    console.error("No Pinecone API key found in config");
+    return;
+  }
+  if (!config.pineconeIndexName) {
+    console.error("No Pinecone index name found in config");
+    return;
+  }
+  if (!config.pineconeEnvironment) {
+    console.error("No Pinecone namespace found in config");
+    return;
+  }
+  const configuration = new Configuration({
+    apiKey: config.openAiApiKey,
+  });
+
+  const openai = new OpenAIApi(configuration);
+  await client.init({
+    apiKey: config.pineconeApiKey,
+    environment: config.pineconeEnvironment,
+  });
+  const index = client.Index(config.pineconeIndexName);
+  const batchSize = 20;
+  for (let i = 0; i < files.length; i += batchSize) {
+    const batch = files.slice(i, i + batchSize);
+    await Promise.all(
+      batch.map(async (file) => {
+        const data = await prepareData({
+          file,
+          packageJson,
+          config,
+          branch,
+        });
+        if (!data) {
+          return;
+        }
+        const { repo, content, codeContent, filePath } = data;
+        await generateAndUpsertEmbedding({
+          repo,
+          content,
+          codeContent,
+          filePath,
+          config,
+          index,
+        });
+      })
+    );
+  }
+};
+
+// TODO: Add Docusauraus support
+export const writeResponsesToFile = async (
+  files: FileData[],
+  responses: any[],
+  config: DaisyConfig
+) => {
+  for (let i = 0; i < files.length; i++) {
+    const filePath = path.join(
+      config.markdownDirectory,
+      files[i].filePath.replace(config.codeBasePath, "")
+    );
+    const fileDir = path.dirname(filePath);
+    const fileContent =
+      responses[i]?.data?.choices[0]?.message?.content ||
+      files[i]?.fileContents;
+
+    await mkdir(fileDir, { recursive: true });
+    await writeFile(`${filePath}.md`, fileContent);
+    console.log(`Documentation written to: ${filePath}`);
+  }
+};
+
+export const writePreviewMarkdownToFile = async (
+  files: FileData[],
+  config: DaisyConfig
+) => {
+  for (let i = 0; i < files.length; i++) {
+    const filePath = path.join(
+      config.daisyDirectoryName,
+      "preview",
+      files[i].filePath.replace(config.codeBasePath, "")
+    );
+    const fileDir = path.dirname(filePath);
+    const fileContent = files[i]?.fullPrompt || files[i]?.fileContents;
+    await mkdir(fileDir, { recursive: true });
+    fileContent && (await writeFile(`${filePath}.md`, fileContent, "utf-8"));
+    console.log(`Preview Prompts written to: ${filePath}`);
+  }
+};
+
+export const generateResponses = async (
+  files: FileData[],
+  config: DaisyConfig
+) => {
+  let openAi: OpenAIApi | undefined;
+  if (config.openAiApiKey) {
+    const configuration = new Configuration({
+      apiKey: config.openAiApiKey,
+    });
+    openAi = new OpenAIApi(configuration);
+  }
+  return await Promise.all(
+    files.map((file) =>
+      createChatCompletion({
+        model: file.model,
+        prompt: file.fullPrompt,
+        config,
+        openAi,
+      })
+    )
+  );
+};
+
+export const splitFiles = (files: FileData[]) => {
+  const skipCompletionFiles = [];
+  const otherFiles = [];
+
+  for (const file of files) {
+    if (file.skipCompletion) {
+      skipCompletionFiles.push(file);
+    } else {
+      otherFiles.push(file);
+    }
+  }
+
+  return [skipCompletionFiles, otherFiles];
+};
+
+export async function getChangedFilesWithStatus({
+  codepath,
+  cwd,
+  lastCommit,
+  config,
+}: {
+  codepath: string;
+  config: DaisyConfig;
+  lastCommit: string;
+  cwd: string;
+}): Promise<ChangedFiles> {
+  const error = await verifyValidRepo(cwd);
+  if (error) {
+    console.error(error);
+    return {
+      addedFiles: [],
+      modifiedFiles: [],
+      deletedFiles: [],
+    };
+  }
+
+  const changedFiles = await getChangedFiles({
+    codepath,
+    cwd,
+    lastCommit,
+  });
+
+  const result = await Promise.all(
+    changedFiles.map(async (file) => getFileDiff({ file, cwd, lastCommit }))
+  );
+
+  const addedFiles: FileGitInfo[] = [];
+  const modifiedFiles: FileGitInfo[] = [];
+  const deletedFiles: FileGitInfo[] = [];
+
+  const fileArrays = {
+    A: addedFiles,
+    M: modifiedFiles,
+    D: deletedFiles,
+  };
+
+  for (const file of result) {
+    const fullFilePath = path.join(config.codeBasePath, file.filePath);
+    const fileContents = await fileReader(fullFilePath);
+    const fileValidity = getFileValidity({
+      filePath: fullFilePath,
+      config,
+      fileContents,
+    });
+    if (fileValidity === FileValidity.Valid) {
+      const { filePath, status, gitDiff } = file;
+
+      const fileArray = fileArrays[status];
+
+      if (fileArray) {
+        fileArray.push({
+          filePath: path.join(config.codeBasePath, filePath),
+          gitDiff,
+          status,
+        });
+      }
+    } else {
+      console.log(getValidityMessage(fileValidity, fullFilePath));
+    }
+  }
+
+  return { addedFiles, modifiedFiles, deletedFiles };
+}
+
+export type CallAnswerAiEmbeddingApiProps = {
+  config: DaisyConfig;
+  repo: string;
+  content: string;
+  codeContent: string;
+  filePath: string;
+};
+
+export const callAnswerAiEmbeddingApi = async ({
+  config,
+  repo,
+  content,
+  codeContent,
+  filePath,
+}: CallAnswerAiEmbeddingApiProps) => {
+  if (!config.answerAI) {
+    console.error("AnswerAI config not found");
+    return;
+  }
+  const resp = await axios
+    .post(
+      config.answerAI.embeddingsUrl,
+      {
+        repo,
+        text: content,
+        filePath: filePath,
+        code: codeContent,
+      },
+      {
+        method: "post",
+        headers: {
+          contentType: "application/json",
+          authorization: `Bearer ${config.answerAI.apiKey}`,
+        },
+      }
+    )
+    .catch((err) => {
+      console.log("error in callAnswerAiEmbeddingApi", err.response.data);
+    });
+};
+
+export type BatchAnswerAiEmbeddingsProcessorProps = {
+  files: FileData[];
+  packageJson: any;
+  config: DaisyConfig;
+  branch: string;
+};
+
+export const batchAnswerAiEmbeddingsProcessor = async ({
+  files,
+  packageJson,
+  config,
+  branch,
+}: BatchAnswerAiEmbeddingsProcessorProps) => {
+  const batchSize = 20;
+  for (let i = 0; i < files.length; i += batchSize) {
+    const batch = files.slice(i, i + batchSize);
+    await Promise.all(
+      batch.map(async (file) => {
+        const data = await prepareData({
+          file,
+          packageJson,
+          config,
+          branch,
+        });
+        if (!data) {
+          return;
+        }
+        const { repo, content, codeContent, filePath } = data;
+        await callAnswerAiEmbeddingApi({
+          repo,
+          content,
+          codeContent,
+          filePath,
+          config,
+        });
+      })
+    );
+  }
+};
+
+export type BatchEmbeddingsProcessorProps = {
+  files: FileData[];
+  config: DaisyConfig;
+  cwd: string;
+};
+
+export const batchEmbeddingsProcessor = async ({
+  files,
+  config,
+  cwd,
+}: BatchEmbeddingsProcessorProps) => {
+  const packageJson = require(path.join(config.codeBasePath, "package.json"));
+  const branch = await getCurrentBranch(cwd);
+  if (config.answerAI?.apiKey) {
+    await batchAnswerAiEmbeddingsProcessor({
+      files,
+      packageJson,
+      config,
+      branch,
+    });
+  } else {
+    await batchPineconeEmbeddingsProcessor({
+      files,
+      packageJson,
+      config,
+      branch,
+    });
+  }
+};

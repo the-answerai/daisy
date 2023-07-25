@@ -1,3 +1,5 @@
+name: Push github action to standalone repo
+
 on:
   push:
     tags:
