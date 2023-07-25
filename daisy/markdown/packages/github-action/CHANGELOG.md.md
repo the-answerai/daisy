@@ -1,5 +1,14 @@
 # @answerai/daisy-github-action
 
+## 0.1.6
+
+### Patch Changes
+
+- dfad40b: change pr title to match commit message
+- dfad40b: bug fixes for core: skip completion on files larger than 16k, use cheaper model for smaller files, skip memorization if completions were skipped by cli.
+- Updated dependencies [dfad40b]
+  - @answerai/daisy-core@0.1.5
+
 ## 0.1.3
 
 ### Patch Changes

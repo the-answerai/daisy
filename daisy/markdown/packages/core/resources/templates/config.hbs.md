@@ -1,17 +1,17 @@
-The purpose of this code is to provide a breakdown and analysis of a configuration file within a software application. The script takes in a prompt and the contents of the file as input and generates a summary, configuration breakdown, interaction summary, and developer questions.
+The purpose of this code is to provide a detailed breakdown of a configuration file for a specific service within a broader software application. The script's role is to document the configuration settings and their potential effects on the application.
 
-The structure of the script is a multi-line string enclosed in triple quotes. It contains placeholders for the prompt and file contents, which will be replaced with actual values when the script is executed.
+The structure of the script is a multi-line string enclosed in triple quotes. It serves as a template for documenting the configuration file.
 
 There are no import statements in this script.
 
-The script does not define any classes or functions. It is a simple text template that generates a formatted output based on the input provided.
+There are no classes or functions defined in this script.
 
 There are no loops or conditional statements in this script.
 
-The script uses variables to store the prompt and file contents. These variables are then used to generate the output.
+The script uses variables to store the summary, service description, configuration summary, configuration breakdown, interaction summary, and developer questions. These variables are used to populate the multi-line string template.
 
-There are no known issues or bugs with this script. However, it is important to note that this script is a template and does not perform any actual analysis or breakdown of the configuration file. It is meant to be modified and extended by adding the necessary logic to analyze the configuration file.
+There are no known issues or bugs with this script.
 
-To use this script, you would need to replace the placeholders "{{prompt}}" and "{{fileContents}}" with the actual prompt and file contents. You can then execute the script to generate the desired output.
+To modify or extend this script, you can update the content of the multi-line string template to reflect the actual configuration file. You can add or remove sections as needed and provide detailed explanations for each configuration parameter.
 
-In summary, this script provides a template for generating a breakdown and analysis of a configuration file within a software application. It can be modified and extended to add the necessary logic for analyzing the configuration file.
+Overall, this script serves as a helpful tool for documenting the configuration settings of a specific service within a software application. It provides a clear and thorough breakdown of the configuration file, helping developers understand its purpose and potential effects on the application.
