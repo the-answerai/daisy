@@ -1,5 +1,11 @@
 # @answerai/daisy
 
+## 0.1.6
+
+### Patch Changes
+
+- d94d0eb: Updated daisy core
+
 ## 0.1.5
 
 ### Patch Changes
