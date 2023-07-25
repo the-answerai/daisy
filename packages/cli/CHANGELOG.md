@@ -1,5 +1,11 @@
 # @answerai/daisy
 
+## 0.1.7
+
+### Patch Changes
+
+- 08f2bb0: Bumped version dependency
+
 ## 0.1.6
 
 ### Patch Changes
