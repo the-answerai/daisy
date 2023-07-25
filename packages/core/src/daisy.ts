@@ -87,7 +87,8 @@ export const runCompletions = async ({
   skipGit,
   confirmCompletionsFunction,
 }: RunCompletionsProps) => {
-  if (await confirmCompletionsFunction(files, config)) {
+  const goAhead = await confirmCompletionsFunction(files, config);
+  if (goAhead) {
     console.log("Proceeding with magic...");
     const [skipCompletionFiles, filesForDocumentation] = splitFiles(files);
 
@@ -116,6 +117,7 @@ export const runCompletions = async ({
   } else {
     console.log("Documentation canceled.");
   }
+  return goAhead;
 };
 
 export type RunMemorizationProps = {
@@ -172,13 +174,15 @@ async function main({
   });
 
   if (!skipCompletion) {
-    await runCompletions({
-      files,
-      config,
-      branch,
-      cwd,
-      confirmCompletionsFunction,
-    });
+    memorize =
+      memorize &&
+      (await runCompletions({
+        files,
+        config,
+        branch,
+        cwd,
+        confirmCompletionsFunction,
+      }));
   }
 
   if (memorize) {
