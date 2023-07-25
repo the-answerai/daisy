@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/Answers-AI/daisy#readme",
   "dependencies": {
-    "@answerai/daisy-core": "workspace:*",
+    "@answerai/daisy-core": "^0.1.4",
     "commander": "^11.0.0",
     "dotenv": "^16.0.3",
     "readline": "^1.3.0"
