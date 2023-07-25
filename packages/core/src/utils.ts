@@ -71,9 +71,9 @@ export const compileCompletionPrompts = async ({
 export const getCompletionModelBasedOnTokenSize = (tokens: number) => {
   // If-else statement to determine which model to use
   if (tokens >= 0 && tokens <= 4000) {
-    return "gpt-3.5-turbo-16k";
-  } else if (tokens > 4000 && tokens <= 16000) {
     return "gpt-3.5-turbo";
+  } else if (tokens > 4000 && tokens <= 16000) {
+    return "gpt-3.5-turbo-16k";
   } else {
     return null;
   }
